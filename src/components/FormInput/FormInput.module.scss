@@ -1,0 +1,68 @@
+@use '@/styles/variables/colors' as colors;
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.label {
+  color: rgba(colors.$color-text-primary, 0.82);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.input {
+  width: 100%;
+  height: 46px;
+  padding: 0 15px;
+  color: colors.$color-text-primary;
+  background:
+    linear-gradient(180deg,
+      rgba(colors.$white, 0.062),
+      rgba(colors.$white, 0.034));
+  border: 0;
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 0 1px rgba(colors.$white, 0.07),
+    inset 0 -1px 0 rgba(colors.$color-action-primary, 0.12);
+  outline: none;
+  transition:
+    background 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+
+  &::placeholder {
+    color: rgba(colors.$color-text-primary, 0.42);
+  }
+
+  &:hover:not(:disabled) {
+    background:
+      linear-gradient(180deg,
+        rgba(colors.$white, 0.078),
+        rgba(colors.$white, 0.042));
+  }
+
+  &:disabled,
+  &:read-only {
+    color: colors.$color-text-muted;
+    background-color: colors.$color-surface-hover;
+    cursor: not-allowed;
+  }
+}
+
+.error {
+  min-height: 18px;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.error {
+  color: colors.$color-danger;
+}
+
+.errorHidden {
+  visibility: hidden;
+}

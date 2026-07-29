@@ -1,0 +1,127 @@
+@use '@/styles/variables/colors' as colors;
+
+.banner {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(colors.$color-action-primary, 0.2), transparent 22rem),
+    radial-gradient(circle at 82% 20%, rgba(133, 196, 255, 0.1), transparent 19rem),
+    linear-gradient(135deg, #151d19, #07090a 58%, #162100);
+  border-radius: 14px;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  &::before {
+    z-index: 2;
+    background:
+      linear-gradient(90deg, rgba(colors.$gray900, 0.1), transparent 26%, transparent 74%, rgba(colors.$gray900, 0.28)),
+      linear-gradient(180deg, rgba(colors.$gray900, 0.22), transparent 28%, rgba(colors.$gray900, 0.78));
+  }
+
+  &::after {
+    z-index: 4;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(colors.$white, 0.055);
+  }
+}
+
+.track {
+  position: absolute;
+  top: -14%;
+  display: grid;
+  gap: 18px;
+  width: 190px;
+}
+
+.trackForward {
+  left: 12%;
+  animation: posterScrollDown 100s linear infinite;
+}
+
+.trackReverse {
+  top: -48%;
+  right: 15%;
+  animation: posterScrollUp 90s linear infinite;
+}
+
+.poster {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 22px 46px rgba(colors.$black, 0.42);
+}
+
+.copy {
+  position: absolute;
+  right: 34px;
+  bottom: 34px;
+  left: 34px;
+  z-index: 5;
+  padding: 22px;
+  background: rgba(colors.$gray900, 0.64);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 0 0 1px rgba(colors.$white, 0.06),
+    0 18px 46px rgba(colors.$black, 0.34);
+  backdrop-filter: blur(16px);
+
+  strong {
+    display: block;
+    margin-bottom: 8px;
+    color: colors.$color-action-primary;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+  }
+
+  p {
+    margin: 0;
+    color: colors.$color-text-primary;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1.35;
+    word-break: keep-all;
+  }
+}
+
+@keyframes posterScrollDown {
+  from { transform: translateY(calc(-50% - 9px)); }
+  to { transform: translateY(0); }
+}
+
+@keyframes posterScrollUp {
+  from { transform: translateY(0); }
+  to { transform: translateY(calc(-50% - 9px)); }
+}
+
+@media (max-width: 900px) {
+  .banner {
+    order: -1;
+    min-height: 320px;
+  }
+
+  .track {
+    width: 136px;
+  }
+}
+
+@media (max-width: 560px) {
+  .banner {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation-play-state: paused;
+  }
+}

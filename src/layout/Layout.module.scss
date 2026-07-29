@@ -1,0 +1,53 @@
+@use '@/styles/variables/sizes' as sizes;
+@use '@/styles/variables/colors' as colors;
+
+.mainLayout {
+  width: min(100%, sizes.$content-width);
+  margin: 0 auto;
+  padding-inline: sizes.$page-gutter;
+}
+
+.content {
+  width: 100%;
+}
+
+.authLayout {
+  display: grid;
+  grid-template-columns: minmax(320px, 430px) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 18px;
+  width: 100%;
+  min-height: 660px;
+  margin-block: 34px 80px;
+  padding: 12px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(colors.$white, 0.075),
+      rgba(colors.$white, 0.018)
+    ),
+    rgba(colors.$white, 0.022);
+  border-radius: 18px;
+  box-shadow: 0 30px 84px rgba(colors.$black, 0.48);
+}
+
+@media (max-width: 900px) {
+  .authLayout {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .mainLayout {
+    padding-inline: 20px;
+  }
+
+  .authLayout {
+    margin-top: 22px;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

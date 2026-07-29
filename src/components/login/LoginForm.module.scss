@@ -1,0 +1,65 @@
+@use '@/styles/variables/colors' as colors;
+
+.loginPanel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: stretch;
+  width: 100%;
+  padding: 32px 30px 28px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg,
+      rgba(colors.$white, 0.045),
+      rgba(colors.$white, 0.018)),
+    colors.$color-surface-default;
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(colors.$white, 0.055);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.submitButton {
+  min-height: 46px;
+  margin-top: 6px;
+  transition:
+    background-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+
+  &:not(:disabled):hover {
+    box-shadow: 0 14px 28px rgba(colors.$color-action-primary, 0.18);
+    transform: translateY(-1px);
+  }
+
+  &:not(:disabled):active {
+    transform: translateY(0) scale(0.99);
+  }
+}
+
+.signupButton {
+  align-self: center;
+  min-height: 34px;
+  margin-top: 10px;
+  padding: 0;
+  color: colors.$color-text-muted;
+  font-size: 13px;
+  font-weight: 800;
+
+  &:hover,
+  &:focus-visible {
+    color: colors.$color-action-primary;
+  }
+}
+
+@media (max-width: 560px) {
+  .loginPanel {
+    padding: 28px 22px;
+  }
+}
