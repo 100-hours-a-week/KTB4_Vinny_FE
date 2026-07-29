@@ -1,5 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { login } from '@/api/auth';
 import AuthHeader from '@/components/auth/AuthHeader';
 import Button from '@/components/Button/Button';
 import FormInput from '@/components/FormInput/FormInput';
@@ -7,10 +9,17 @@ import { loginSchema } from '@/schema/auth';
 import styles from '@/components/login/LoginForm.module.scss';
 
 export default function LoginForm() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    watch,
+    setError,
+    clearErrors,
+    formState: {
+      errors,
+      isSubmitting,
+    },
   } = useForm({
     resolver: zodResolver(loginSchema),
     mode: 'onBlur',
@@ -19,9 +28,22 @@ export default function LoginForm() {
       password: '',
     },
   });
+  const isLoginFormValid = loginSchema.safeParse(watch()).success;
 
-  const handleLogin = () => {
-    // TODO: 로그인 API 연결
+  const handleLogin = async (values) => {
+    clearErrors('root.server');
+
+    try {
+      const auth = await login(values);
+
+      localStorage.setItem('auth', JSON.stringify(auth));
+      navigate('/', { replace: true });
+    } catch (error) {
+      setError('root.server', {
+        type: 'server',
+        message: error.message || '로그인에 실패했습니다.',
+      });
+    }
   };
 
   return (
@@ -55,9 +77,9 @@ export default function LoginForm() {
           className={styles.submitButton}
           type="submit"
           fullWidth
-          disabled={!isValid}
+          disabled={!isLoginFormValid || isSubmitting}
         >
-          로그인
+          {isSubmitting ? '로그인 중...' : '로그인'}
         </Button>
       </form>
       <Button

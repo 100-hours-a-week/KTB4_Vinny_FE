@@ -11,6 +11,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.5.7
         version: 5.5.7(react-hook-form@7.83.0(react@19.2.8))(zod@4.4.3)
+      ky:
+        specifier: ^2.0.2
+        version: 2.0.2
       react:
         specifier: ^19.2.7
         version: 19.2.8
@@ -493,6 +496,10 @@ packages:
     resolution: {integrity: sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==}
     engines: {node: '>=0.10.0'}
 
+  ky@2.0.2:
+    resolution: {integrity: sha512-/GmXpo9F9W+f8n4Ivr2iH+7h7wL7jLbLKWkMlpflcCRb6kGjBfTlASEXaZ9qUgNTn4VgS0P2pwxxzQ4EM6Ulgg==}
+    engines: {node: '>=22'}
+
   lightningcss-android-arm64@1.33.0:
     resolution: {integrity: sha512-gEpRTalKdosp4Bb8qWtc2iOgE5SeIHlpS1up9bFq2wAyYhl1UdTObYiHe98zEM9SQvSoqQZ1IQD0JNpg3Ml5pg==}
     engines: {node: '>= 12.0.0'}
@@ -949,6 +956,8 @@ snapshots:
     dependencies:
       is-extglob: 2.1.1
     optional: true
+
+  ky@2.0.2: {}
 
   lightningcss-android-arm64@1.33.0:
     optional: true
