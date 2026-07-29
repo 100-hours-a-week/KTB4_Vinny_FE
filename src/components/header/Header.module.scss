@@ -1,0 +1,91 @@
+@use '@/styles/variables/colors' as colors;
+@use '@/styles/variables/sizes' as sizes;
+@use '@/styles/variables/zindex' as zindex;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: zindex.$header;
+  min-height: sizes.$header-height;
+  background: rgba(colors.$gray900, 0.86);
+  border-bottom: 1px solid rgba(colors.$white, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  min-height: sizes.$header-height;
+  margin: 0 auto;
+}
+
+.title {
+  justify-self: start;
+  text-align: left;
+  font-size: 0;
+  font-weight: 900;
+  letter-spacing: 0;
+
+  &::before {
+    content: 'CINE';
+    color: colors.$color-text-primary;
+    font-size: 25px;
+  }
+
+  &::after {
+    content: 'ON';
+    color: colors.$color-action-primary;
+    font-size: 25px;
+    text-shadow: 0 0 18px rgba(colors.$color-action-primary, 0.36);
+  }
+}
+
+.profileMenu {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  justify-self: end;
+
+  .iconButton {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+  }
+}
+
+.iconButton {
+  display: inline-grid;
+  place-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-action-primary;
+    outline-offset: 3px;
+  }
+}
+
+.avatar {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  background-color: colors.$color-surface-subtle;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: 1px solid rgba(colors.$white, 0.12);
+  border-radius: 50%;
+}
+
+.movieInner .profileMenu {
+  width: 88px;
+  justify-content: flex-end;
+}
+
+@media (max-width: 720px) {
+  .movieInner {
+    width: min(calc(100% - 40px), sizes.$content-width);
+  }
+}
