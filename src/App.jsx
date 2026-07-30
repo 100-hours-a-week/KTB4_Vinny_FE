@@ -3,6 +3,7 @@ import GlobalLayout from '@/layout/GlobalLayout';
 import AuthLayout from '@/layout/AuthLayout';
 
 import LoginPage from '@/pages/LoginPage';
+import SignupPage from '@/pages/SignupPage';
 
 function App() {
 
@@ -12,6 +13,7 @@ function App() {
         <Route element={<GlobalLayout />}>
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
           </Route>
         </Route>
       </Routes>
