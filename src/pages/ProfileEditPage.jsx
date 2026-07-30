@@ -22,6 +22,7 @@ export default function ProfileEditPage() {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isDirty, isSubmitting },
   } = useForm({
     resolver: zodResolver(profileEditFormSchema),

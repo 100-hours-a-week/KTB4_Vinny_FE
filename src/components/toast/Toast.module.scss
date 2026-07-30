@@ -39,10 +39,6 @@
   }
 }
 
-.success {
-  background: colors.$color-surface-hover;
-}
-
 .error {
   background:
     linear-gradient(rgba(colors.$color-danger, 0.08), rgba(colors.$color-danger, 0.08)),
