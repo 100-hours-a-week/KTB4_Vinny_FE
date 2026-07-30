@@ -6,7 +6,7 @@ import Button from '@/components/button/Button';
 import FormInput from '@/components/forminput/FormInput';
 import SectionHeader from '@/components/settings/SectionHeader';
 import { useAuth } from '@/context/auth-context';
-import { profileEditSchema } from '@/schema/user';
+import { profileEditFormSchema } from '@/schema/user';
 import styles from '@/pages/ProfileEditPage.module.scss';
 
 const MAX_PROFILE_IMAGE_SIZE = 10 * 1024 * 1024;
@@ -24,11 +24,11 @@ export default function ProfileEditPage() {
     reset,
     formState: { errors, isDirty, isSubmitting },
   } = useForm({
-    resolver: zodResolver(profileEditSchema),
+    resolver: zodResolver(profileEditFormSchema),
     mode: 'onBlur',
     defaultValues: {
       nickname: user.nickname,
-      profileImage: user.profileImage,
+      profileImage: null,
     },
   });
 
@@ -58,7 +58,10 @@ export default function ProfileEditPage() {
     }
 
     setPreviewUrl(URL.createObjectURL(file));
-    setImageError('* 이미지 업로드 API 연결 후 변경할 수 있습니다.');
+    setValue('profileImage', file, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   const handleProfileUpdate = async (values) => {
@@ -68,7 +71,10 @@ export default function ProfileEditPage() {
     try {
       const updatedProfile = await updateUserProfile(values, auth.accessToken);
       updateUser(updatedProfile);
-      reset(updatedProfile);
+      reset({
+        nickname: updatedProfile.nickname,
+        profileImage: null,
+      });
       setPreviewUrl(updatedProfile.profileImage || '');
       setIsSaved(true);
     } catch (error) {
@@ -156,7 +162,7 @@ export default function ProfileEditPage() {
           <Button
             className={styles.submitButton}
             type="submit"
-            disabled={!isDirty || isSubmitting || Boolean(imageError)}
+            disabled={!isDirty || isSubmitting}
           >
             {isSubmitting ? '저장 중...' : '변경사항 저장'}
           </Button>
