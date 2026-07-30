@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { logout as requestLogout } from '@/api/auth';
+import { deleteUser } from '@/api/user';
+import ConfirmDialog from '@/components/dialog/ConfirmDialog';
+import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
 import styles from '@/components/settings/SettingsSidebar.module.scss';
 
@@ -8,7 +11,22 @@ export default function SettingsSidebar() {
   const navigate = useNavigate();
   const { auth, user, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isWithdrawalDialogOpen, setIsWithdrawalDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [toast, setToast] = useState(null);
   const profileInitial = user.nickname.trim().charAt(0);
+
+  useEffect(() => {
+    if (!toast) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setToast(null);
+    }, 4000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [toast]);
 
   const handleLogout = async () => {
     if (isLoggingOut) {
@@ -24,6 +42,24 @@ export default function SettingsSidebar() {
     } finally {
       logout();
       navigate('/', { replace: true });
+    }
+  };
+
+  const handleWithdrawal = async () => {
+    setIsDeleting(true);
+
+    try {
+      await deleteUser(auth.accessToken);
+      logout();
+      navigate('/', { replace: true });
+    } catch (error) {
+      setIsWithdrawalDialogOpen(false);
+      setToast({
+        message: error.message || '회원 탈퇴에 실패했습니다.',
+        variant: 'error',
+      });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -77,7 +113,37 @@ export default function SettingsSidebar() {
           <span aria-hidden="true">↗</span>
           {isLoggingOut ? '로그아웃 중...' : '로그아웃'}
         </button>
+        <button
+          className={styles.withdrawalButton}
+          type="button"
+          onClick={() => {
+            setToast(null);
+            setIsWithdrawalDialogOpen(true);
+          }}
+        >
+          <span aria-hidden="true">×</span>
+          회원 탈퇴
+        </button>
       </div>
+
+      <ConfirmDialog
+        open={isWithdrawalDialogOpen}
+        title="회원탈퇴 하시겠습니까?"
+        description="작성한 리뷰와 댓글은 알 수 없음 처리 됩니다."
+        confirmLabel="확인"
+        isPending={isDeleting}
+        onCancel={() => setIsWithdrawalDialogOpen(false)}
+        onConfirm={handleWithdrawal}
+      />
+
+      {toast && (
+        <Toast
+          variant={toast.variant}
+          onClose={() => setToast(null)}
+        >
+          {toast.message}
+        </Toast>
+      )}
     </aside>
   );
 }

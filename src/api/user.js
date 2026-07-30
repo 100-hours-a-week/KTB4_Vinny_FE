@@ -50,3 +50,12 @@ export async function updateUserPassword(payload, accessToken) {
     json: payload,
   });
 }
+
+export async function deleteUser(accessToken) {
+  await request('users/me', {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}

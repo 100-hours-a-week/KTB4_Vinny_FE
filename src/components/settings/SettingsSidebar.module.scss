@@ -139,6 +139,15 @@
   }
 }
 
+.withdrawalButton {
+  color: colors.$color-danger;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(colors.$color-danger, 0.08);
+  }
+}
+
 @media (max-width: 680px) {
   .sidebar {
     padding-bottom: 18px;
