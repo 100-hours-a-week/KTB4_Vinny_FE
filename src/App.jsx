@@ -8,6 +8,7 @@ import LoginPage from '@/pages/LoginPage';
 import SignupPage from '@/pages/SignupPage';
 import HomePage from '@/pages/HomePage';
 import ProfileEditPage from '@/pages/ProfileEditPage';
+import PasswordChangePage from '@/pages/PasswordChangePage';
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/settings" element={<SettingsLayout />}>
             <Route index element={<Navigate to="profile" replace />} />
             <Route path="profile" element={<ProfileEditPage />} />
+            <Route path="password" element={<PasswordChangePage />} />
           </Route>
         </Route>
       </Routes>

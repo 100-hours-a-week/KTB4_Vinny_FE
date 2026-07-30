@@ -40,3 +40,13 @@ export async function updateUserProfile(payload, accessToken) {
 
   return result.data;
 }
+
+export async function updateUserPassword(payload, accessToken) {
+  await request('users/me/password', {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    json: payload,
+  });
+}

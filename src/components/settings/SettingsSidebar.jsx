@@ -35,6 +35,15 @@ export default function SettingsSidebar() {
           <span aria-hidden="true">●</span>
           회원 정보 수정
         </NavLink>
+        <NavLink
+          className={({ isActive }) => (
+            `${styles.navLink} ${isActive ? styles.active : ''}`.trim()
+          )}
+          to="/settings/password"
+        >
+          <span aria-hidden="true">◆</span>
+          비밀번호 변경
+        </NavLink>
       </nav>
     </aside>
   );

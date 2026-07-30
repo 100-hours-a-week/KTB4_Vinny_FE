@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { PASSWORD_PATTERN } from '@/utils/validation';
 
 export const nicknameSchema = z
   .string()
@@ -22,3 +23,21 @@ export const profileEditResponseSchema = z.object({
   nickname: nicknameSchema,
   profileImage: z.string().nullable(),
 });
+
+export const passwordChangeSchema = z
+  .object({
+    password: z
+      .string()
+      .min(1, '* 비밀번호를 입력해주세요.')
+      .regex(
+        PASSWORD_PATTERN,
+        '* 비밀번호는 8~20자이며, 영문 대문자·소문자·숫자·특수문자를 각각 1개 이상 포함해야 합니다.',
+      ),
+    passwordConfirm: z
+      .string()
+      .min(1, '* 비밀번호를 한 번 더 입력해주세요.'),
+  })
+  .refine(({ password, passwordConfirm }) => password === passwordConfirm, {
+    path: ['passwordConfirm'],
+    message: '* 비밀번호가 일치하지 않습니다.',
+  });
