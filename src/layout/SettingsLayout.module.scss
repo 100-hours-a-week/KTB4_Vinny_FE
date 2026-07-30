@@ -1,0 +1,44 @@
+@use '@/styles/variables/colors' as colors;
+
+.settingsLayout {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  min-height: 650px;
+  margin-block: 78px;
+  overflow: hidden;
+  background: colors.$color-surface-default;
+  border: 1px solid rgba(colors.$white, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 30px 84px rgba(colors.$black, 0.4);
+}
+
+.settingsContent {
+  min-width: 0;
+  padding: 64px 84px;
+  background: rgba(colors.$white, 0.025);
+  border-left: 1px solid rgba(colors.$white, 0.08);
+}
+
+@media (max-width: 900px) {
+  .settingsLayout {
+    grid-template-columns: 210px minmax(0, 1fr);
+    margin-block: 40px;
+  }
+
+  .settingsContent {
+    padding: 48px 40px;
+  }
+}
+
+@media (max-width: 680px) {
+  .settingsLayout {
+    display: block;
+    margin-block: 24px 48px;
+  }
+
+  .settingsContent {
+    padding: 36px 22px;
+    border-top: 1px solid rgba(colors.$white, 0.08);
+    border-left: 0;
+  }
+}

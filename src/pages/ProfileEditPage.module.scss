@@ -1,0 +1,141 @@
+@use '@/styles/variables/colors' as colors;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 34px;
+}
+
+.profileUpload {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 154px;
+  margin-bottom: 8px;
+  padding: 24px;
+  background: rgba(colors.$white, 0.035);
+  border: 1px solid rgba(colors.$white, 0.08);
+  border-radius: 14px;
+
+  strong {
+    font-size: 13px;
+  }
+
+  p {
+    margin: 12px 0 0;
+    color: colors.$color-text-muted;
+    font-size: 11px;
+  }
+}
+
+.imageControl {
+  position: relative;
+}
+
+.profileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
+
+.profilePreview {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 108px;
+  height: 108px;
+  padding: 0;
+  overflow: hidden;
+  background: colors.$color-surface-muted;
+  border: 1px solid rgba(colors.$white, 0.12);
+  border-radius: 50%;
+  cursor: pointer;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.initial {
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.changeLabel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: colors.$white;
+  font-size: 11px;
+  font-weight: 800;
+  background: rgba(colors.$black, 0.48);
+  opacity: 0;
+  transition: opacity 160ms ease;
+
+  .profilePreview:hover &,
+  .profilePreview:focus-visible & {
+    opacity: 1;
+  }
+}
+
+.imageError {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 230px;
+  color: colors.$color-danger !important;
+  text-align: right;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 18px;
+  margin-top: 6px;
+
+  p {
+    margin: 0;
+    font-size: 11px;
+  }
+}
+
+.submitError {
+  color: colors.$color-danger;
+}
+
+.success {
+  color: colors.$color-action-primary;
+}
+
+.submitButton {
+  min-width: 170px;
+}
+
+@media (max-width: 560px) {
+  .profileUpload {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .imageControl {
+    align-self: center;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .submitButton {
+    width: 100%;
+  }
+}

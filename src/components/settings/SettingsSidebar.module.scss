@@ -1,0 +1,93 @@
+@use '@/styles/variables/colors' as colors;
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  padding: 28px 18px;
+  background:
+    radial-gradient(circle at 10% 0, rgba(colors.$color-action-primary, 0.08), transparent 35%),
+    colors.$color-surface-default;
+}
+
+.userProfile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+  margin-bottom: 18px;
+  padding: 0 10px 18px;
+  border-bottom: 1px solid rgba(colors.$white, 0.07);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  background-color: colors.$color-surface-muted;
+  background-position: center;
+  background-size: cover;
+  border: 1px solid rgba(colors.$white, 0.1);
+  border-radius: 50%;
+  font-weight: 800;
+}
+
+.userText {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+
+  strong,
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  strong {
+    font-size: 14px;
+  }
+
+  span {
+    color: colors.$color-text-muted;
+    font-size: 11px;
+  }
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 48px;
+  padding: 0 14px;
+  color: colors.$color-text-muted;
+  border-left: 3px solid transparent;
+  font-size: 13px;
+  font-weight: 800;
+  transition: 160ms ease;
+
+  span {
+    font-size: 7px;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: colors.$color-text-primary;
+    background: rgba(colors.$white, 0.04);
+  }
+}
+
+.active {
+  color: colors.$color-action-primary;
+  background: rgba(colors.$color-action-primary, 0.1);
+  border-left-color: colors.$color-action-primary;
+}
+
+@media (max-width: 680px) {
+  .sidebar {
+    padding-bottom: 18px;
+  }
+}

@@ -44,6 +44,18 @@ export default function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateUser = (updatedUser) => {
+    setUser((currentUser) => {
+      const nextUser = {
+        ...currentUser,
+        ...updatedUser,
+      };
+
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(nextUser));
+      return nextUser;
+    });
+  };
+
   const value = useMemo(
     () => ({
       auth,
@@ -51,6 +63,7 @@ export default function AuthProvider({ children }) {
       isLoggedIn: Boolean(auth?.accessToken && user),
       login,
       logout,
+      updateUser,
     }),
     [auth, user],
   );
