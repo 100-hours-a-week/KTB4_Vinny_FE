@@ -4,8 +4,8 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { signup } from '@/api/auth';
 import AuthHeader from '@/components/auth/AuthHeader';
-import Button from '@/components/Button/Button';
-import FormInput from '@/components/FormInput/FormInput';
+import Button from '@/components/button/Button';
+import FormInput from '@/components/forminput/FormInput';
 import { signupSchema } from '@/schema/auth';
 import styles from '@/components/signup/SignupForm.module.scss';
 

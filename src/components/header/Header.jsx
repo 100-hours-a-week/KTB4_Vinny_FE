@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import Button from '@/components/Button/Button';
+import Button from '@/components/button/Button';
 import { useAuth } from '@/context/auth-context';
 import styles from '@/components/header/Header.module.scss';
 

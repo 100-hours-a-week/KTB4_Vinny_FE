@@ -1,4 +1,4 @@
-import Button from '../Button/Button';
+import Button from '@/components/button/Button';
 import styles from './LoginButton.module.scss';
 
 export default function LoginButton({ to = '/login' }) {
