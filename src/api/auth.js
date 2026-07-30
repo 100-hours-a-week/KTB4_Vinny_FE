@@ -42,3 +42,12 @@ export async function signup(payload) {
 
   return result.data;
 }
+
+export async function logout(accessToken) {
+  await request('logout', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}

@@ -86,8 +86,65 @@
   border-left-color: colors.$color-action-primary;
 }
 
+.accountActions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid rgba(colors.$white, 0.07);
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 44px;
+    padding: 0 14px;
+    background: transparent;
+    border: 0;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      color 160ms ease,
+      background-color 160ms ease;
+
+    span {
+      display: inline-grid;
+      place-items: center;
+      width: 10px;
+      font-size: 12px;
+    }
+
+    &:focus-visible {
+      outline: 2px solid colors.$color-action-primary;
+      outline-offset: -2px;
+    }
+
+    &:disabled {
+      cursor: wait;
+      opacity: 0.55;
+    }
+  }
+}
+
+.logoutButton {
+  color: colors.$color-text-muted;
+
+  &:hover,
+  &:focus-visible {
+    color: colors.$color-text-primary;
+    background: rgba(colors.$white, 0.04);
+  }
+}
+
 @media (max-width: 680px) {
   .sidebar {
     padding-bottom: 18px;
+  }
+
+  .accountActions {
+    margin-top: 22px;
   }
 }
