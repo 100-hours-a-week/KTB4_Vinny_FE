@@ -41,24 +41,10 @@
   }
 }
 
-.profileMenu {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  justify-self: end;
-
-  .iconButton {
-    width: 36px;
-    height: 36px;
-    padding: 0;
-  }
-}
-
-.iconButton {
+.profileLink {
   display: inline-grid;
   place-items: center;
-  background: transparent;
-  border: 0;
+  justify-self: end;
   border-radius: 50%;
 
   &:focus-visible {
@@ -77,15 +63,9 @@
   background-size: cover;
   border: 1px solid rgba(colors.$white, 0.12);
   border-radius: 50%;
-}
-
-.movieInner .profileMenu {
-  width: 88px;
-  justify-content: flex-end;
-}
-
-@media (max-width: 720px) {
-  .movieInner {
-    width: min(calc(100% - 40px), sizes.$content-width);
-  }
+  color: colors.$color-text-primary;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 36px;
+  text-align: center;
 }

@@ -1,21 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { login } from '@/api/auth';
 import AuthHeader from '@/components/auth/AuthHeader';
 import Button from '@/components/Button/Button';
 import FormInput from '@/components/FormInput/FormInput';
+import { useAuth } from '@/context/auth-context';
 import { loginSchema } from '@/schema/auth';
 import styles from '@/components/login/LoginForm.module.scss';
 
 export default function LoginForm() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const {
     register,
     handleSubmit,
     watch,
-    setError,
-    clearErrors,
     formState: {
       errors,
       isSubmitting,
@@ -31,18 +30,11 @@ export default function LoginForm() {
   const isLoginFormValid = loginSchema.safeParse(watch()).success;
 
   const handleLogin = async (values) => {
-    clearErrors('root.server');
-
     try {
-      const auth = await login(values);
-
-      localStorage.setItem('auth', JSON.stringify(auth));
+      await login(values);
       navigate('/', { replace: true });
     } catch (error) {
-      setError('root.server', {
-        type: 'server',
-        message: error.message || '로그인에 실패했습니다.',
-      });
+      alert(error.message || '로그인에 실패했습니다.');
     }
   };
 
