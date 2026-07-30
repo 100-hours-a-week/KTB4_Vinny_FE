@@ -11,7 +11,7 @@ export default function Header() {
     <header className={styles.header}>
       <div className={styles.inner}>
         <Link
-          className={styles.logo}
+          className={styles.title}
           to="/"
         >
           CINEON
