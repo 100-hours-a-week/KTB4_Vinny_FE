@@ -5,6 +5,7 @@ import { updateUserProfile } from '@/api/user';
 import Button from '@/components/button/Button';
 import FormInput from '@/components/forminput/FormInput';
 import SectionHeader from '@/components/settings/SectionHeader';
+import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
 import { profileEditFormSchema } from '@/schema/user';
 import styles from '@/pages/ProfileEditPage.module.scss';
@@ -16,8 +17,7 @@ export default function ProfileEditPage() {
   const profileInputRef = useRef(null);
   const [previewUrl, setPreviewUrl] = useState(user.profileImage || '');
   const [imageError, setImageError] = useState('');
-  const [submitError, setSubmitError] = useState('');
-  const [isSaved, setIsSaved] = useState(false);
+  const [toast, setToast] = useState(null);
   const {
     register,
     handleSubmit,
@@ -38,10 +38,22 @@ export default function ProfileEditPage() {
     }
   }, [previewUrl]);
 
+  useEffect(() => {
+    if (!toast) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setToast(null);
+    }, toast.variant === 'error' ? 4000 : 3000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [toast]);
+
   const handleProfileImageChange = (event) => {
     const [file] = event.target.files;
     setImageError('');
-    setIsSaved(false);
+    setToast(null);
 
     if (!file) {
       return;
@@ -65,8 +77,7 @@ export default function ProfileEditPage() {
   };
 
   const handleProfileUpdate = async (values) => {
-    setSubmitError('');
-    setIsSaved(false);
+    setToast(null);
 
     try {
       const updatedProfile = await updateUserProfile(values, auth.accessToken);
@@ -76,13 +87,17 @@ export default function ProfileEditPage() {
         profileImage: null,
       });
       setPreviewUrl(updatedProfile.profileImage || '');
-      setIsSaved(true);
+      setToast({
+        message: '변경사항을 저장했습니다.',
+        variant: 'success',
+      });
     } catch (error) {
-      setSubmitError(
-        error.message === 'DUPLICATE_NICKNAME'
-          ? '* 이미 사용 중인 닉네임입니다.'
-          : error.message || '* 회원 정보 변경에 실패했습니다.',
-      );
+      setToast({
+        message: error.message === 'DUPLICATE_NICKNAME'
+          ? '이미 사용 중인 닉네임입니다.'
+          : error.message || '회원 정보 변경에 실패했습니다.',
+        variant: 'error',
+      });
     }
   };
 
@@ -146,19 +161,12 @@ export default function ProfileEditPage() {
           error={errors.nickname?.message}
           {...register('nickname', {
             onChange: () => {
-              setSubmitError('');
-              setIsSaved(false);
+              setToast(null);
             },
           })}
         />
 
         <div className={styles.actions}>
-          <p
-            className={submitError ? styles.submitError : styles.success}
-            role={submitError ? 'alert' : 'status'}
-          >
-            {submitError || (isSaved ? '변경사항을 저장했습니다.' : '')}
-          </p>
           <Button
             className={styles.submitButton}
             type="submit"
@@ -168,6 +176,15 @@ export default function ProfileEditPage() {
           </Button>
         </div>
       </form>
+
+      {toast && (
+        <Toast
+          variant={toast.variant}
+          onClose={() => setToast(null)}
+        >
+          {toast.message}
+        </Toast>
+      )}
     </div>
   );
 }
