@@ -1,0 +1,95 @@
+@use '@/styles/variables/colors' as colors;
+
+.section {
+  margin-block: 44px 88px;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 850;
+    letter-spacing: -0.03em;
+  }
+}
+
+.moreLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  color: colors.$color-text-muted;
+  font-size: 13px;
+  font-weight: 700;
+  transition: color 160ms ease;
+
+  span {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: colors.$color-action-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-action-primary;
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+}
+
+.movieList {
+  display: grid;
+  grid-auto-columns: calc((100% - 72px) / 5);
+  grid-auto-flow: column;
+  gap: 18px;
+  padding: 2px 2px 18px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-color: colors.$gray500 transparent;
+  scrollbar-width: thin;
+  scroll-snap-type: inline proximity;
+}
+
+@media (max-width: 900px) {
+  .movieList {
+    grid-auto-columns: calc((100% - 54px) / 4);
+  }
+}
+
+@media (max-width: 680px) {
+  .movieList {
+    grid-auto-columns: calc((100% - 32px) / 2.5);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 560px) {
+  .section {
+    margin-block: 34px 60px;
+  }
+
+  .heading {
+    margin-bottom: 16px;
+
+    h2 {
+      font-size: 19px;
+    }
+  }
+
+  .moreLink {
+    font-size: 12px;
+  }
+
+  .movieList {
+    grid-auto-columns: 42%;
+  }
+}

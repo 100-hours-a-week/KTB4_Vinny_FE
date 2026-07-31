@@ -1,0 +1,91 @@
+@use '@/styles/variables/colors' as colors;
+
+.card {
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.link {
+  display: block;
+  border-radius: 9px;
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-action-primary;
+    outline-offset: 5px;
+  }
+
+  &:hover .poster {
+    transform: scale(1.035);
+  }
+
+  &:hover .title {
+    color: colors.$color-action-primary;
+  }
+}
+
+.posterFrame {
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: colors.$color-surface-hover;
+  border-radius: 9px;
+  box-shadow: 0 14px 34px rgba(colors.$black, 0.28);
+}
+
+.poster {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 260ms ease;
+}
+
+.posterFallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: colors.$color-action-primary;
+  background:
+    radial-gradient(circle at 50% 32%, colors.$gray300, transparent 28%),
+    linear-gradient(145deg, colors.$gray700, colors.$gray900);
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.info {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 10px;
+  padding-top: 12px;
+}
+
+.title {
+  margin: 0;
+  overflow: hidden;
+  color: colors.$color-text-primary;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  transition: color 160ms ease;
+  white-space: nowrap;
+}
+
+.rating {
+  display: flex;
+  gap: 3px;
+  margin: 0;
+  color: colors.$color-rating;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+@media (max-width: 560px) {
+  .title,
+  .rating {
+    font-size: 12px;
+  }
+}

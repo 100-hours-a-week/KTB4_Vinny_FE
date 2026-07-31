@@ -1,0 +1,265 @@
+@use '@/styles/variables/colors' as colors;
+
+.hero {
+  position: relative;
+  min-height: 438px;
+  margin-top: 28px;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 74% 35%, rgba(colors.$gray300, 0.42), transparent 45%),
+    colors.$gray700;
+  border-radius: 14px;
+  box-shadow: 0 24px 74px rgba(colors.$black, 0.35);
+}
+
+.backdrop {
+  position: absolute;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: reveal 500ms ease;
+}
+
+.overlay {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(colors.$black, 0.92) 0%, rgba(colors.$black, 0.7) 34%, rgba(colors.$black, 0.18) 70%),
+    linear-gradient(0deg, rgba(colors.$black, 0.72) 0%, transparent 42%);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: min(590px, 68%);
+  min-height: 438px;
+  padding: 56px 72px;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: colors.$color-action-primary;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(30px, 3.5vw, 42px);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 14px 0 0;
+  color: colors.$gray100;
+  font-size: 15px;
+  font-weight: 700;
+
+  span + span {
+    position: relative;
+
+    &::before {
+      position: absolute;
+      left: -10px;
+      color: colors.$gray200;
+      content: '·';
+    }
+  }
+}
+
+.overview,
+.overviewMuted {
+  display: -webkit-box;
+  max-width: 540px;
+  min-height: 48px;
+  margin: 22px 0 28px;
+  overflow: hidden;
+  color: colors.$gray100;
+  font-size: 14px;
+  line-height: 1.65;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.overviewMuted {
+  color: colors.$color-text-muted;
+}
+
+.detailButton {
+  min-width: 136px;
+}
+
+.navigationButton {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: colors.$color-text-primary;
+  background: rgba(colors.$gray900, 0.6);
+  border: 1px solid rgba(colors.$white, 0.2);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+
+  &:hover,
+  &:focus-visible {
+    color: colors.$color-action-primary;
+    background: rgba(colors.$gray900, 0.88);
+    border-color: colors.$color-action-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-action-primary;
+    outline-offset: 3px;
+  }
+}
+
+.previousButton {
+  left: 18px;
+}
+
+.nextButton {
+  right: 18px;
+}
+
+.indicators {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  transform: translateX(-50%);
+}
+
+.indicator {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  background: rgba(colors.$white, 0.68);
+  border: 0;
+  border-radius: 999px;
+  transition:
+    width 180ms ease,
+    background-color 180ms ease;
+
+  &[aria-pressed='true'] {
+    width: 28px;
+    background: colors.$color-action-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$white;
+    outline-offset: 3px;
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0.42;
+    transform: scale(1.015);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 760px) {
+  .hero,
+  .content {
+    min-height: 420px;
+  }
+
+  .content {
+    width: 88%;
+    padding: 48px 58px;
+  }
+
+  .navigationButton {
+    width: 34px;
+    height: 34px;
+  }
+
+  .previousButton {
+    left: 10px;
+  }
+
+  .nextButton {
+    right: 10px;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero,
+  .content {
+    min-height: 430px;
+  }
+
+  .hero {
+    margin-top: 20px;
+    border-radius: 10px;
+  }
+
+  .overlay {
+    background:
+      linear-gradient(90deg, rgba(colors.$black, 0.87), rgba(colors.$black, 0.28)),
+      linear-gradient(0deg, rgba(colors.$black, 0.94) 4%, rgba(colors.$black, 0.08) 78%);
+  }
+
+  .content {
+    justify-content: flex-end;
+    width: 100%;
+    padding: 50px 26px 76px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .meta {
+    font-size: 13px;
+  }
+
+  .overview,
+  .overviewMuted {
+    min-height: 42px;
+    margin-block: 16px 22px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .navigationButton {
+    top: 42%;
+    width: 32px;
+    height: 32px;
+  }
+
+  .indicators {
+    bottom: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop {
+    animation: none;
+  }
+}
