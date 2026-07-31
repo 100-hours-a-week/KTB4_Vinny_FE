@@ -1,16 +1,26 @@
+import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AuthHeader from '@/components/auth/AuthHeader';
 import Button from '@/components/button/Button';
 import FormInput from '@/components/input/FormInput';
+import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
+import useToast from '@/hooks/useToast';
 import { loginSchema } from '@/schema/auth';
 import styles from '@/components/login/LoginForm.module.scss';
 
 export default function LoginForm() {
+  const location = useLocation();
   const navigate = useNavigate();
   const { login } = useAuth();
+  const {
+    closeToast,
+    showError,
+    showSuccess,
+    toast,
+  } = useToast();
   const {
     register,
     handleSubmit,
@@ -29,58 +39,77 @@ export default function LoginForm() {
   });
   const isLoginFormValid = loginSchema.safeParse(watch()).success;
 
+  useEffect(() => {
+    if (!location.state?.signupSuccess) {
+      return;
+    }
+
+    showSuccess('회원가입이 완료되었습니다. 로그인해주세요.');
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, location.state, navigate, showSuccess]);
+
   const handleLogin = async (values) => {
+    closeToast();
+
     try {
       await login(values);
       navigate('/', { replace: true });
     } catch (error) {
-      alert(error.message || '로그인에 실패했습니다.');
+      showError(error.message || '로그인에 실패했습니다.');
     }
   };
 
   return (
-    <section className={styles.loginPanel}>
-      <AuthHeader
-        title="로그인"
-        description="좋아하는 영화를 다시 만나고, 남겨둔 리뷰를 이어서 확인하세요."
-      />
-      <form
-        className={styles.form}
-        onSubmit={handleSubmit(handleLogin)}
-        noValidate
-      >
-        <FormInput
-          label="이메일"
-          type="email"
-          placeholder="이메일을 입력하세요"
-          autoComplete="email"
-          error={errors.email?.message}
-          {...register('email')}
+    <>
+      <section className={styles.loginPanel}>
+        <AuthHeader
+          title="로그인"
+          description="좋아하는 영화를 다시 만나고, 남겨둔 리뷰를 이어서 확인하세요."
         />
-        <FormInput
-          label="비밀번호"
-          type="password"
-          placeholder="비밀번호를 입력하세요"
-          autoComplete="current-password"
-          error={errors.password?.message}
-          {...register('password')}
-        />
-        <Button
-          className={styles.submitButton}
-          type="submit"
-          fullWidth
-          disabled={!isLoginFormValid || isSubmitting}
+        <form
+          className={styles.form}
+          onSubmit={handleSubmit(handleLogin)}
+          noValidate
         >
-          {isSubmitting ? '로그인 중...' : '로그인'}
+          <FormInput
+            label="이메일"
+            type="email"
+            placeholder="이메일을 입력하세요"
+            autoComplete="email"
+            error={errors.email?.message}
+            {...register('email')}
+          />
+          <FormInput
+            label="비밀번호"
+            type="password"
+            placeholder="비밀번호를 입력하세요"
+            autoComplete="current-password"
+            error={errors.password?.message}
+            {...register('password')}
+          />
+          <Button
+            className={styles.submitButton}
+            type="submit"
+            fullWidth
+            disabled={!isLoginFormValid || isSubmitting}
+          >
+            {isSubmitting ? '로그인 중...' : '로그인'}
+          </Button>
+        </form>
+        <Button
+          className={styles.signupButton}
+          variant="ghost"
+          to="/signup"
+        >
+          아직 계정이 없나요? 회원가입
         </Button>
-      </form>
-      <Button
-        className={styles.signupButton}
-        variant="ghost"
-        to="/signup"
-      >
-        아직 계정이 없나요? 회원가입
-      </Button>
-    </section>
+      </section>
+
+      {toast ? (
+        <Toast variant={toast.variant} onClose={closeToast}>
+          {toast.message}
+        </Toast>
+      ) : null}
+    </>
   );
 }

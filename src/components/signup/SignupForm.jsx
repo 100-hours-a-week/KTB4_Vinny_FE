@@ -6,7 +6,9 @@ import { signup } from '@/api/auth';
 import AuthHeader from '@/components/auth/AuthHeader';
 import Button from '@/components/button/Button';
 import FormInput from '@/components/input/FormInput';
+import Toast from '@/components/toast/Toast';
 import useImagePreview from '@/hooks/useImagePreview';
+import useToast from '@/hooks/useToast';
 import { signupSchema } from '@/schema/auth';
 import styles from '@/components/signup/SignupForm.module.scss';
 
@@ -14,6 +16,11 @@ export default function SignupForm() {
   const navigate = useNavigate();
   const profileInputRef = useRef(null);
   const { previewUrl, setPreviewImage } = useImagePreview();
+  const {
+    closeToast,
+    showError,
+    toast,
+  } = useToast();
   const {
     register,
     handleSubmit,
@@ -45,17 +52,22 @@ export default function SignupForm() {
   };
 
   const handleSignup = async (formValues) => {
+    closeToast();
+
     try {
       await signup(formValues);
-      alert('회원가입이 완료되었습니다.');
-      navigate('/login', { replace: true });
+      navigate('/login', {
+        replace: true,
+        state: { signupSuccess: true },
+      });
     } catch (error) {
-      alert(error.message || '회원가입에 실패했습니다.');
+      showError(error.message || '회원가입에 실패했습니다.');
     }
   };
 
   return (
-    <section className={styles.signupPanel}>
+    <>
+      <section className={styles.signupPanel}>
       <AuthHeader
         title="회원가입"
         description="프로필을 만들고 영화 취향과 리뷰를 한 곳에 모아보세요."
@@ -142,6 +154,13 @@ export default function SignupForm() {
       >
         이미 계정이 있나요? 로그인
       </Button>
-    </section>
+      </section>
+
+      {toast ? (
+        <Toast variant={toast.variant} onClose={closeToast}>
+          {toast.message}
+        </Toast>
+      ) : null}
+    </>
   );
 }
