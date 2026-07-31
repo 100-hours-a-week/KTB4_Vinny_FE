@@ -8,6 +8,7 @@ import SectionHeader from '@/components/settings/SectionHeader';
 import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
 import { profileEditFormSchema } from '@/schema/user';
+import { getFullImageUrl } from '@/utils/image';
 import styles from '@/pages/ProfileEditPage.module.scss';
 
 const MAX_PROFILE_IMAGE_SIZE = 10 * 1024 * 1024;
@@ -15,7 +16,9 @@ const MAX_PROFILE_IMAGE_SIZE = 10 * 1024 * 1024;
 export default function ProfileEditPage() {
   const { auth, user, updateUser } = useAuth();
   const profileInputRef = useRef(null);
-  const [previewUrl, setPreviewUrl] = useState(user.profileImage || '');
+  const [previewUrl, setPreviewUrl] = useState(
+    () => getFullImageUrl(user.profileImage),
+  );
   const [imageError, setImageError] = useState('');
   const [toast, setToast] = useState(null);
   const {
@@ -87,7 +90,7 @@ export default function ProfileEditPage() {
         nickname: updatedProfile.nickname,
         profileImage: null,
       });
-      setPreviewUrl(updatedProfile.profileImage || '');
+      setPreviewUrl(getFullImageUrl(updatedProfile.profileImage));
       setToast({
         message: '변경사항을 저장했습니다.',
         variant: 'success',

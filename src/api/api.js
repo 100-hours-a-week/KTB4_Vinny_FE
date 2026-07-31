@@ -1,16 +1,16 @@
 import ky, { HTTPError, TimeoutError } from 'ky';
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   ? `${import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '')}/`
   : undefined;
 
 const api = ky.create({
-  baseUrl: apiBaseUrl,
+  baseUrl: API_BASE_URL,
   timeout: 5000,
 });
 
 export async function request(path, options) {
-  if (!apiBaseUrl) {
+  if (!API_BASE_URL) {
     throw new Error('API 주소가 설정되지 않았습니다.');
   }
 

@@ -5,6 +5,7 @@ import { deleteUser } from '@/api/user';
 import ConfirmDialog from '@/components/dialog/ConfirmDialog';
 import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
+import { getFullImageUrl } from '@/utils/image';
 import styles from '@/components/settings/SettingsSidebar.module.scss';
 
 export default function SettingsSidebar() {
@@ -15,6 +16,7 @@ export default function SettingsSidebar() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [toast, setToast] = useState(null);
   const profileInitial = user.nickname.trim().charAt(0);
+  const profileImageUrl = getFullImageUrl(user.profileImage);
 
   useEffect(() => {
     if (!toast) {
@@ -69,12 +71,12 @@ export default function SettingsSidebar() {
         <span
           className={styles.avatar}
           style={
-            user.profileImage
-              ? { backgroundImage: `url("${user.profileImage}")` }
+            profileImageUrl
+              ? { backgroundImage: `url("${profileImageUrl}")` }
               : undefined
           }
         >
-          {!user.profileImage && profileInitial}
+          {!profileImageUrl && profileInitial}
         </span>
         <div className={styles.userText}>
           <strong>{user.nickname}</strong>
