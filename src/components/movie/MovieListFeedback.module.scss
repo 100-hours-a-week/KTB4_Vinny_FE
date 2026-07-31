@@ -1,0 +1,36 @@
+@use '@/styles/variables/colors' as colors;
+
+.feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 560px;
+  padding: 40px 24px;
+  text-align: center;
+
+  h1 {
+    margin: 6px 0 12px;
+    font-size: clamp(24px, 4vw, 34px);
+    letter-spacing: -0.035em;
+  }
+}
+
+.label {
+  margin: 0;
+  color: colors.$color-action-primary;
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.description {
+  margin: 0 0 28px;
+  color: colors.$color-text-muted;
+  line-height: 1.6;
+}
+
+@media (max-width: 560px) {
+  .feedback {
+    min-height: 460px;
+  }
+}

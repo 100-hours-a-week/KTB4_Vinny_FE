@@ -7,6 +7,7 @@ import SettingsLayout from '@/layout/SettingsLayout';
 import LoginPage from '@/pages/LoginPage';
 import SignupPage from '@/pages/SignupPage';
 import HomePage from '@/pages/HomePage';
+import MovieListPage from '@/pages/MovieListPage';
 import ProfileEditPage from '@/pages/ProfileEditPage';
 import PasswordChangePage from '@/pages/PasswordChangePage';
 
@@ -22,6 +23,7 @@ function App() {
           </Route>
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/movies" element={<MovieListPage />} />
           </Route>
           <Route path="/settings" element={<SettingsLayout />}>
             <Route index element={<Navigate to="profile" replace />} />

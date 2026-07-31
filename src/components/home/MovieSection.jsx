@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import MovieCard from '@/components/home/MovieCard';
+import MovieCard from '@/components/movie/MovieCard';
 import styles from '@/components/home/MovieSection.module.scss';
 
 export default function MovieSection({ movies }) {

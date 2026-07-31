@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { getMovieImageUrl } from '@/utils/image';
-import styles from '@/components/home/MovieCard.module.scss';
+import styles from '@/components/movie/MovieCard.module.scss';
 
 export default function MovieCard({ movie }) {
   const [hasImageError, setHasImageError] = useState(false);

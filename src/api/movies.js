@@ -25,3 +25,10 @@ export function getPopularMovies(limit = 10, options) {
     limit: String(limit),
   }), options);
 }
+
+export function getMovies(page = 1, limit = 30, options) {
+  return getMovieList(new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+  }), options);
+}
