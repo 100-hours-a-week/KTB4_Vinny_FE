@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { getMovies } from '@/api/movies';
+import MovieFeedback from '@/components/movie/MovieFeedback';
 import MovieGridList from '@/components/movie/MovieGridList';
 import MovieGridSkeleton from '@/components/movie/MovieGridSkeleton';
-import MovieListFeedback from '@/components/movie/MovieListFeedback';
 
 const MOVIES_PER_PAGE = 30;
 
@@ -90,7 +90,7 @@ export default function MovieListPage() {
 
   if (errorMessage && movies.length === 0) {
     return (
-      <MovieListFeedback
+      <MovieFeedback
         description={errorMessage}
         onRetry={() => setRetryCount((count) => count + 1)}
         title="영화 목록을 불러오지 못했습니다."
@@ -100,7 +100,7 @@ export default function MovieListPage() {
 
   if (movies.length === 0) {
     return (
-      <MovieListFeedback
+      <MovieFeedback
         description="새로운 영화가 준비되면 이곳에서 만나볼 수 있어요."
         title="아직 등록된 영화가 없습니다."
       />

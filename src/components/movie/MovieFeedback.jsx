@@ -1,7 +1,7 @@
 import Button from '@/components/Button/Button';
-import styles from '@/components/movie/MovieListFeedback.module.scss';
+import styles from '@/components/movie/MovieFeedback.module.scss';
 
-export default function MovieListFeedback({
+export default function MovieFeedback({
   description,
   onRetry,
   title,
