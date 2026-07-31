@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { updateUserProfile } from '@/api/user';
@@ -6,6 +6,7 @@ import Button from '@/components/button/Button';
 import FormInput from '@/components/input/FormInput';
 import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
+import useImagePreview from '@/hooks/useImagePreview';
 import useToast from '@/hooks/useToast';
 import { profileEditFormSchema } from '@/schema/user';
 import { getFullImageUrl } from '@/utils/image';
@@ -16,8 +17,8 @@ const MAX_PROFILE_IMAGE_SIZE = 10 * 1024 * 1024;
 export default function ProfileEditForm() {
   const { auth, user, updateUser } = useAuth();
   const profileInputRef = useRef(null);
-  const [previewUrl, setPreviewUrl] = useState(
-    () => getFullImageUrl(user.profileImage),
+  const { previewUrl, setPreviewImage } = useImagePreview(
+    getFullImageUrl(user.profileImage),
   );
   const [imageError, setImageError] = useState('');
   const {
@@ -41,12 +42,6 @@ export default function ProfileEditForm() {
     },
   });
 
-  useEffect(() => () => {
-    if (previewUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(previewUrl);
-    }
-  }, [previewUrl]);
-
   const handleProfileImageChange = (event) => {
     const [file] = event.target.files;
     setImageError('');
@@ -62,11 +57,7 @@ export default function ProfileEditForm() {
       return;
     }
 
-    if (previewUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(previewUrl);
-    }
-
-    setPreviewUrl(URL.createObjectURL(file));
+    setPreviewImage(file);
     setValue('profileImage', file, {
       shouldDirty: true,
       shouldValidate: true,
@@ -83,7 +74,7 @@ export default function ProfileEditForm() {
         nickname: updatedProfile.nickname,
         profileImage: null,
       });
-      setPreviewUrl(getFullImageUrl(updatedProfile.profileImage));
+      setPreviewImage(getFullImageUrl(updatedProfile.profileImage));
       showSuccess('변경사항을 저장했습니다.');
     } catch (error) {
       showError(

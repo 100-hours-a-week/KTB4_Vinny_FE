@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -6,13 +6,14 @@ import { signup } from '@/api/auth';
 import AuthHeader from '@/components/auth/AuthHeader';
 import Button from '@/components/button/Button';
 import FormInput from '@/components/input/FormInput';
+import useImagePreview from '@/hooks/useImagePreview';
 import { signupSchema } from '@/schema/auth';
 import styles from '@/components/signup/SignupForm.module.scss';
 
 export default function SignupForm() {
   const navigate = useNavigate();
   const profileInputRef = useRef(null);
-  const [previewUrl, setPreviewUrl] = useState('');
+  const { previewUrl, setPreviewImage } = useImagePreview();
   const {
     register,
     handleSubmit,
@@ -33,26 +34,14 @@ export default function SignupForm() {
   const values = watch();
   const isSignupFormValid = signupSchema.safeParse(values).success;
 
-  useEffect(() => {
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-    };
-  }, [previewUrl]);
-
   const handleProfileImageChange = (event) => {
     const [file] = event.target.files;
-
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-    }
 
     setValue('profileImage', file ?? null, {
       shouldDirty: true,
       shouldValidate: true,
     });
-    setPreviewUrl(file ? URL.createObjectURL(file) : '');
+    setPreviewImage(file);
   };
 
   const handleSignup = async (formValues) => {
