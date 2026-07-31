@@ -4,7 +4,13 @@ import styles from '@/components/review/ReviewForm.module.scss';
 
 const MAX_CONTENT_LENGTH = 500;
 
-function StarRatingInput({ disabled, onChange, onLoginRequired, value }) {
+function StarRatingInput({
+  disabled,
+  isSubmitting,
+  onChange,
+  onLoginRequired,
+  value,
+}) {
   const [previewValue, setPreviewValue] = useState(null);
   const displayValue = previewValue ?? value;
 
@@ -35,6 +41,7 @@ function StarRatingInput({ disabled, onChange, onLoginRequired, value }) {
             aria-disabled={disabled}
             aria-label={`${starRating}점`}
             className={isActive ? styles.activeStar : ''}
+            disabled={isSubmitting}
             key={starRating}
             onBlur={() => setPreviewValue(null)}
             onClick={() => handleRatingSelect(starRating)}
@@ -56,6 +63,7 @@ export default function ReviewForm({
   editingReview,
   hasOwnReview,
   isLoggedIn,
+  isSubmitting,
   onCancelEdit,
   onLoginRequired,
   onSubmit,
@@ -70,7 +78,7 @@ export default function ReviewForm({
     setContent(editingReview?.content ?? '');
   }, [editingReview]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!isLoggedIn) {
@@ -82,12 +90,15 @@ export default function ReviewForm({
       return;
     }
 
-    onSubmit({
+    const didSubmit = await onSubmit({
       content: content.trim(),
       rating,
     });
-    setRating(0);
-    setContent('');
+
+    if (didSubmit) {
+      setRating(0);
+      setContent('');
+    }
   };
 
   if (hasOwnReview && !isEditing) {
@@ -105,6 +116,7 @@ export default function ReviewForm({
         <h2>{isEditing ? '내 평점 수정하기' : '내 평점 남기기'}</h2>
         <StarRatingInput
           disabled={!isLoggedIn}
+          isSubmitting={isSubmitting}
           onChange={setRating}
           onLoginRequired={onLoginRequired}
           value={rating}
@@ -118,6 +130,7 @@ export default function ReviewForm({
         </label>
         <div className={styles.textareaWrap}>
           <textarea
+            disabled={isSubmitting}
             id="review-content"
             maxLength={MAX_CONTENT_LENGTH}
             onChange={(event) => setContent(event.target.value)}
@@ -134,12 +147,21 @@ export default function ReviewForm({
         </div>
         <div className={styles.actions}>
           {isEditing ? (
-            <Button onClick={onCancelEdit} variant="secondary">
+            <Button
+              disabled={isSubmitting}
+              onClick={onCancelEdit}
+              variant="secondary"
+            >
               취소
             </Button>
           ) : null}
-          <Button disabled={!isLoggedIn || !isValid} type="submit">
-            {isEditing ? '리뷰 수정' : '리뷰 등록'}
+          <Button
+            disabled={!isLoggedIn || !isValid || isSubmitting}
+            type="submit"
+          >
+            {isSubmitting
+              ? '처리 중...'
+              : isEditing ? '리뷰 수정' : '리뷰 등록'}
           </Button>
         </div>
       </div>

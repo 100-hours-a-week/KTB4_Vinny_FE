@@ -1,13 +1,30 @@
 import ReviewItem from '@/components/review/ReviewItem';
 import styles from '@/components/review/ReviewList.module.scss';
 
-export default function ReviewList({ onDelete, onEdit, reviews }) {
+export default function ReviewList({
+  errorMessage,
+  isLoading,
+  onDelete,
+  onEdit,
+  onRetry,
+  reviews,
+  totalReviews,
+}) {
   return (
     <section aria-labelledby="review-list-title" className={styles.section}>
       <h2 id="review-list-title">
-        리뷰 <span>{reviews.length}개</span>
+        리뷰 <span>{totalReviews}개</span>
       </h2>
-      {reviews.length > 0 ? (
+      {isLoading ? (
+        <div aria-label="리뷰를 불러오는 중" className={styles.loading} role="status">
+          <span />
+        </div>
+      ) : errorMessage ? (
+        <div className={styles.error} role="alert">
+          <p>{errorMessage}</p>
+          <button onClick={onRetry} type="button">다시 시도</button>
+        </div>
+      ) : reviews.length > 0 ? (
         <div className={styles.list}>
           {reviews.map((review) => (
             <ReviewItem

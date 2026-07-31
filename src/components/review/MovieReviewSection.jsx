@@ -1,23 +1,78 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  createReview,
+  deleteReview,
+  getReviews,
+  updateReview,
+} from '@/api/reviews';
 import ConfirmDialog from '@/components/dialog/ConfirmDialog';
 import ReviewForm from '@/components/review/ReviewForm';
 import ReviewList from '@/components/review/ReviewList';
 import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
-import { createMockReviews } from '@/mocks/reviews';
 import styles from '@/components/review/MovieReviewSection.module.scss';
 
-export default function MovieReviewSection() {
+function getReviewErrorMessage(message) {
+  const messages = {
+    REVIEW_BAD_REQUEST: '리뷰 내용과 별점을 확인해주세요.',
+    REVIEW_NOT_FOUND: '리뷰를 찾을 수 없습니다.',
+    UNAUTHORIZED: '로그인이 필요한 서비스입니다.',
+    FORBIDDEN_ACCESS: '리뷰를 변경할 권한이 없습니다.',
+  };
+
+  return messages[message] || message || '리뷰 요청에 실패했습니다.';
+}
+
+export default function MovieReviewSection({
+  onMovieChange,
+  tmdbMovieId,
+}) {
   const navigate = useNavigate();
   const sectionRef = useRef(null);
-  const { isLoggedIn, user } = useAuth();
-  const [reviews, setReviews] = useState(createMockReviews);
+  const { auth, isLoggedIn } = useAuth();
+  const [reviews, setReviews] = useState([]);
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [listError, setListError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [reloadCount, setReloadCount] = useState(0);
   const [editingReview, setEditingReview] = useState(null);
   const [reviewToDelete, setReviewToDelete] = useState(null);
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const hasOwnReview = reviews.some((review) => review.isOwner);
+  const accessToken = auth?.accessToken;
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadReviews() {
+      setIsLoading(true);
+      setListError('');
+
+      try {
+        const data = await getReviews(tmdbMovieId, accessToken, {
+          signal: controller.signal,
+        });
+        setReviews(data.reviews);
+        setTotalReviews(data.totalReviews);
+        setEditingReview(null);
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          setListError(getReviewErrorMessage(error.message));
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadReviews();
+    return () => controller.abort();
+  }, [accessToken, reloadCount, tmdbMovieId]);
 
   useEffect(() => {
     if (!toast) {
@@ -28,48 +83,50 @@ export default function MovieReviewSection() {
     return () => window.clearTimeout(timeoutId);
   }, [toast]);
 
-  const handleReviewSubmit = ({ content, rating }) => {
-    const now = new Date().toISOString();
+  const reloadReviews = async () => {
+    const data = await getReviews(tmdbMovieId, accessToken);
+    setReviews(data.reviews);
+    setTotalReviews(data.totalReviews);
+  };
 
-    if (editingReview) {
-      setReviews((currentReviews) => currentReviews.map((review) => (
-        review.reviewId === editingReview.reviewId
-          ? {
-            ...review,
-            content,
-            rating,
-            updatedAt: now,
-            isUpdated: true,
-          }
-          : review
-      )));
-      setEditingReview(null);
-      setToast({ message: '리뷰를 수정했습니다.', variant: 'success' });
-      return;
+  const handleReviewSubmit = async (payload) => {
+    if (!accessToken) {
+      setIsLoginDialogOpen(true);
+      return false;
     }
 
-    if (hasOwnReview) {
-      setToast({ message: '이미 이 영화에 리뷰를 작성했습니다.', variant: 'error' });
-      return;
-    }
+    setIsSubmitting(true);
+    setToast(null);
 
-    setReviews((currentReviews) => [
-      {
-        reviewId: globalThis.crypto?.randomUUID?.() ?? `review-${Date.now()}`,
-        content,
-        rating,
-        createdAt: now,
-        updatedAt: now,
-        isOwner: true,
-        isUpdated: false,
-        writer: {
-          nickname: user.nickname,
-          profileImage: user.profileImage,
-        },
-      },
-      ...currentReviews,
-    ]);
-    setToast({ message: '리뷰를 등록했습니다.', variant: 'success' });
+    try {
+      if (editingReview) {
+        const updatedReview = await updateReview(
+          editingReview.reviewId,
+          payload,
+          accessToken,
+        );
+        setReviews((currentReviews) => currentReviews.map((review) => (
+          review.reviewId === updatedReview.reviewId ? updatedReview : review
+        )));
+        setEditingReview(null);
+        setToast({ message: '리뷰를 수정했습니다.', variant: 'success' });
+      } else {
+        await createReview(tmdbMovieId, payload, accessToken);
+        await reloadReviews();
+        setToast({ message: '리뷰를 등록했습니다.', variant: 'success' });
+      }
+
+      onMovieChange();
+      return true;
+    } catch (error) {
+      setToast({
+        message: getReviewErrorMessage(error.message),
+        variant: 'error',
+      });
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleEdit = (review) => {
@@ -79,33 +136,59 @@ export default function MovieReviewSection() {
     });
   };
 
-  const handleDelete = () => {
-    setReviews((currentReviews) => currentReviews.filter(
-      (review) => review.reviewId !== reviewToDelete.reviewId,
-    ));
-
-    if (editingReview?.reviewId === reviewToDelete.reviewId) {
-      setEditingReview(null);
+  const handleDelete = async () => {
+    if (!reviewToDelete || !accessToken) {
+      return;
     }
 
-    setReviewToDelete(null);
-    setToast({ message: '리뷰를 삭제했습니다.', variant: 'success' });
+    setIsDeleting(true);
+    setToast(null);
+
+    try {
+      await deleteReview(reviewToDelete.reviewId, accessToken);
+      setReviews((currentReviews) => currentReviews.filter(
+        (review) => review.reviewId !== reviewToDelete.reviewId,
+      ));
+      setTotalReviews((currentTotal) => Math.max(0, currentTotal - 1));
+
+      if (editingReview?.reviewId === reviewToDelete.reviewId) {
+        setEditingReview(null);
+      }
+
+      setReviewToDelete(null);
+      setToast({ message: '리뷰를 삭제했습니다.', variant: 'success' });
+      onMovieChange();
+    } catch (error) {
+      setToast({
+        message: getReviewErrorMessage(error.message),
+        variant: 'error',
+      });
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
     <div className={styles.section} ref={sectionRef}>
-      <ReviewForm
-        editingReview={editingReview}
-        hasOwnReview={hasOwnReview}
-        isLoggedIn={isLoggedIn}
-        onCancelEdit={() => setEditingReview(null)}
-        onLoginRequired={() => setIsLoginDialogOpen(true)}
-        onSubmit={handleReviewSubmit}
-      />
+      {!isLoading && !listError ? (
+        <ReviewForm
+          editingReview={editingReview}
+          hasOwnReview={hasOwnReview}
+          isLoggedIn={isLoggedIn}
+          isSubmitting={isSubmitting}
+          onCancelEdit={() => setEditingReview(null)}
+          onLoginRequired={() => setIsLoginDialogOpen(true)}
+          onSubmit={handleReviewSubmit}
+        />
+      ) : null}
       <ReviewList
+        errorMessage={listError}
+        isLoading={isLoading}
         onDelete={setReviewToDelete}
         onEdit={handleEdit}
+        onRetry={() => setReloadCount((count) => count + 1)}
         reviews={reviews}
+        totalReviews={totalReviews}
       />
 
       {isLoginDialogOpen ? (
@@ -123,6 +206,7 @@ export default function MovieReviewSection() {
         <ConfirmDialog
           confirmLabel="삭제하기"
           description="삭제한 리뷰는 복구할 수 없습니다."
+          isPending={isDeleting}
           onCancel={() => setReviewToDelete(null)}
           onConfirm={handleDelete}
           open

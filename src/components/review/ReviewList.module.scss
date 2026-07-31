@@ -30,3 +30,55 @@
   border: 1px solid rgba(colors.$white, 0.07);
   border-radius: 10px;
 }
+
+.loading,
+.error {
+  display: grid;
+  place-items: center;
+  min-height: 150px;
+  color: colors.$color-text-muted;
+  background: rgba(colors.$white, 0.025);
+  border: 1px solid rgba(colors.$white, 0.07);
+  border-radius: 10px;
+}
+
+.loading span {
+  width: 28px;
+  height: 28px;
+  border: 3px solid colors.$gray500;
+  border-top-color: colors.$color-action-primary;
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+.error {
+  align-content: center;
+  gap: 12px;
+  text-align: center;
+
+  p {
+    margin: 0;
+  }
+
+  button {
+    padding: 8px 15px;
+    color: colors.$black;
+    background: colors.$color-action-primary;
+    border: 0;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 800;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading span {
+    animation: none;
+  }
+}

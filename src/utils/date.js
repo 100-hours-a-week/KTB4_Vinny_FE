@@ -1,5 +1,8 @@
 export function formatRelativeTime(dateValue) {
-  const timestamp = new Date(dateValue).getTime();
+  const normalizedDateValue = typeof dateValue === 'string'
+    ? dateValue.replace(' ', 'T')
+    : dateValue;
+  const timestamp = new Date(normalizedDateValue).getTime();
   const elapsedSeconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
 
   if (elapsedSeconds < 60) {
@@ -29,5 +32,11 @@ export function formatRelativeTime(dateValue) {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-  }).format(new Date(dateValue));
+  }).format(new Date(normalizedDateValue));
+}
+
+export function getDateTimeValue(dateValue) {
+  return typeof dateValue === 'string'
+    ? dateValue.replace(' ', 'T')
+    : dateValue;
 }

@@ -25,6 +25,15 @@ export default function MovieDetailPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [retryCount, setRetryCount] = useState(0);
 
+  const refreshMovieDetail = async () => {
+    try {
+      const data = await getMovieDetail(tmdbMovieId);
+      setMovie(data);
+    } catch {
+      // 리뷰 작업은 완료됐으므로 기존 영화 정보는 유지합니다.
+    }
+  };
+
   useEffect(() => {
     const controller = new AbortController();
 
@@ -75,7 +84,10 @@ export default function MovieDetailPage() {
   return (
     <>
       <MovieDetailHero movie={movie} />
-      <MovieReviewSection />
+      <MovieReviewSection
+        onMovieChange={refreshMovieDetail}
+        tmdbMovieId={tmdbMovieId}
+      />
     </>
   );
 }

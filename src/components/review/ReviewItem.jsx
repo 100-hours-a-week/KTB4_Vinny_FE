@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { formatRelativeTime } from '@/utils/date';
+import { formatRelativeTime, getDateTimeValue } from '@/utils/date';
 import { getFullImageUrl } from '@/utils/image';
 import styles from '@/components/review/ReviewItem.module.scss';
 
@@ -46,7 +46,7 @@ export default function ReviewItem({ onDelete, onEdit, review }) {
             </span>
             <b>{review.rating}</b>
           </p>
-          <time dateTime={review.updatedAt}>
+          <time dateTime={getDateTimeValue(review.updatedAt)}>
             {formatRelativeTime(review.updatedAt)}
             {review.isUpdated ? ' · 수정됨' : ''}
           </time>
