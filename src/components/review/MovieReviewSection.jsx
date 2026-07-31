@@ -1,16 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  createReview,
-  deleteReview,
-  getReviews,
-  updateReview,
-} from '@/api/reviews';
 import ConfirmDialog from '@/components/dialog/ConfirmDialog';
 import ReviewForm from '@/components/review/ReviewForm';
 import ReviewList from '@/components/review/ReviewList';
 import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
+import useReviews from '@/hooks/useReviews';
+import useToast from '@/hooks/useToast';
 import styles from '@/components/review/MovieReviewSection.module.scss';
 
 function getReviewErrorMessage(message) {
@@ -31,63 +27,32 @@ export default function MovieReviewSection({
   const navigate = useNavigate();
   const sectionRef = useRef(null);
   const { auth, isLoggedIn } = useAuth();
-  const [reviews, setReviews] = useState([]);
-  const [totalReviews, setTotalReviews] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [listError, setListError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [reloadCount, setReloadCount] = useState(0);
   const [editingReview, setEditingReview] = useState(null);
   const [reviewToDelete, setReviewToDelete] = useState(null);
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
-  const [toast, setToast] = useState(null);
-  const hasOwnReview = reviews.some((review) => review.isOwner);
+  const {
+    closeToast,
+    showError,
+    showSuccess,
+    toast,
+  } = useToast();
   const accessToken = auth?.accessToken;
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function loadReviews() {
-      setIsLoading(true);
-      setListError('');
-
-      try {
-        const data = await getReviews(tmdbMovieId, accessToken, {
-          signal: controller.signal,
-        });
-        setReviews(data.reviews);
-        setTotalReviews(data.totalReviews);
-        setEditingReview(null);
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          setListError(getReviewErrorMessage(error.message));
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    loadReviews();
-    return () => controller.abort();
-  }, [accessToken, reloadCount, tmdbMovieId]);
-
-  useEffect(() => {
-    if (!toast) {
-      return undefined;
-    }
-
-    const timeoutId = window.setTimeout(() => setToast(null), 3000);
-    return () => window.clearTimeout(timeoutId);
-  }, [toast]);
-
-  const reloadReviews = async () => {
-    const data = await getReviews(tmdbMovieId, accessToken);
-    setReviews(data.reviews);
-    setTotalReviews(data.totalReviews);
-  };
+  const {
+    create,
+    errorMessage,
+    isDeleting,
+    isLoading,
+    isSaving,
+    reload,
+    remove,
+    reviews,
+    totalReviews,
+    update,
+  } = useReviews({ accessToken, tmdbMovieId });
+  const hasOwnReview = reviews.some((review) => review.isOwner);
+  const listError = errorMessage
+    ? getReviewErrorMessage(errorMessage)
+    : '';
 
   const handleReviewSubmit = async (payload) => {
     if (!accessToken) {
@@ -95,37 +60,26 @@ export default function MovieReviewSection({
       return false;
     }
 
-    setIsSubmitting(true);
-    setToast(null);
+    closeToast();
 
     try {
       if (editingReview) {
-        const updatedReview = await updateReview(
+        await update(
           editingReview.reviewId,
           payload,
-          accessToken,
         );
-        setReviews((currentReviews) => currentReviews.map((review) => (
-          review.reviewId === updatedReview.reviewId ? updatedReview : review
-        )));
         setEditingReview(null);
-        setToast({ message: '리뷰를 수정했습니다.', variant: 'success' });
+        showSuccess('리뷰를 수정했습니다.');
       } else {
-        await createReview(tmdbMovieId, payload, accessToken);
-        await reloadReviews();
-        setToast({ message: '리뷰를 등록했습니다.', variant: 'success' });
+        await create(payload);
+        showSuccess('리뷰를 등록했습니다.');
       }
 
       onMovieChange();
       return true;
     } catch (error) {
-      setToast({
-        message: getReviewErrorMessage(error.message),
-        variant: 'error',
-      });
+      showError(getReviewErrorMessage(error.message));
       return false;
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -141,30 +95,20 @@ export default function MovieReviewSection({
       return;
     }
 
-    setIsDeleting(true);
-    setToast(null);
+    closeToast();
 
     try {
-      await deleteReview(reviewToDelete.reviewId, accessToken);
-      setReviews((currentReviews) => currentReviews.filter(
-        (review) => review.reviewId !== reviewToDelete.reviewId,
-      ));
-      setTotalReviews((currentTotal) => Math.max(0, currentTotal - 1));
+      await remove(reviewToDelete.reviewId);
 
       if (editingReview?.reviewId === reviewToDelete.reviewId) {
         setEditingReview(null);
       }
 
       setReviewToDelete(null);
-      setToast({ message: '리뷰를 삭제했습니다.', variant: 'success' });
+      showSuccess('리뷰를 삭제했습니다.');
       onMovieChange();
     } catch (error) {
-      setToast({
-        message: getReviewErrorMessage(error.message),
-        variant: 'error',
-      });
-    } finally {
-      setIsDeleting(false);
+      showError(getReviewErrorMessage(error.message));
     }
   };
 
@@ -175,7 +119,7 @@ export default function MovieReviewSection({
           editingReview={editingReview}
           hasOwnReview={hasOwnReview}
           isLoggedIn={isLoggedIn}
-          isSubmitting={isSubmitting}
+          isSubmitting={isSaving}
           onCancelEdit={() => setEditingReview(null)}
           onLoginRequired={() => setIsLoginDialogOpen(true)}
           onSubmit={handleReviewSubmit}
@@ -186,7 +130,7 @@ export default function MovieReviewSection({
         isLoading={isLoading}
         onDelete={setReviewToDelete}
         onEdit={handleEdit}
-        onRetry={() => setReloadCount((count) => count + 1)}
+        onRetry={() => reload().catch(() => {})}
         reviews={reviews}
         totalReviews={totalReviews}
       />
@@ -215,7 +159,7 @@ export default function MovieReviewSection({
       ) : null}
 
       {toast ? (
-        <Toast onClose={() => setToast(null)} variant={toast.variant}>
+        <Toast onClose={closeToast} variant={toast.variant}>
           {toast.message}
         </Toast>
       ) : null}

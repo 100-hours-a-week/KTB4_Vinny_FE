@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { logout as requestLogout } from '@/api/auth';
 import { deleteUser } from '@/api/user';
 import ConfirmDialog from '@/components/dialog/ConfirmDialog';
 import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
+import useToast from '@/hooks/useToast';
 import { getFullImageUrl } from '@/utils/image';
 import styles from '@/components/settings/SettingsSidebar.module.scss';
 
@@ -14,21 +15,13 @@ export default function SettingsSidebar() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isWithdrawalDialogOpen, setIsWithdrawalDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [toast, setToast] = useState(null);
+  const {
+    closeToast,
+    showError,
+    toast,
+  } = useToast();
   const profileInitial = user.nickname.trim().charAt(0);
   const profileImageUrl = getFullImageUrl(user.profileImage);
-
-  useEffect(() => {
-    if (!toast) {
-      return undefined;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setToast(null);
-    }, 4000);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [toast]);
 
   const handleLogout = async () => {
     if (isLoggingOut) {
@@ -56,10 +49,7 @@ export default function SettingsSidebar() {
       navigate('/', { replace: true });
     } catch (error) {
       setIsWithdrawalDialogOpen(false);
-      setToast({
-        message: error.message || '회원 탈퇴에 실패했습니다.',
-        variant: 'error',
-      });
+      showError(error.message || '회원 탈퇴에 실패했습니다.');
     } finally {
       setIsDeleting(false);
     }
@@ -119,7 +109,7 @@ export default function SettingsSidebar() {
           className={styles.withdrawalButton}
           type="button"
           onClick={() => {
-            setToast(null);
+            closeToast();
             setIsWithdrawalDialogOpen(true);
           }}
         >
@@ -141,7 +131,7 @@ export default function SettingsSidebar() {
       {toast && (
         <Toast
           variant={toast.variant}
-          onClose={() => setToast(null)}
+          onClose={closeToast}
         >
           {toast.message}
         </Toast>

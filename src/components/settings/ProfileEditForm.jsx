@@ -6,6 +6,7 @@ import Button from '@/components/button/Button';
 import FormInput from '@/components/input/FormInput';
 import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
+import useToast from '@/hooks/useToast';
 import { profileEditFormSchema } from '@/schema/user';
 import { getFullImageUrl } from '@/utils/image';
 import styles from '@/components/settings/ProfileEditForm.module.scss';
@@ -19,7 +20,12 @@ export default function ProfileEditForm() {
     () => getFullImageUrl(user.profileImage),
   );
   const [imageError, setImageError] = useState('');
-  const [toast, setToast] = useState(null);
+  const {
+    closeToast,
+    showError,
+    showSuccess,
+    toast,
+  } = useToast();
   const {
     register,
     handleSubmit,
@@ -41,22 +47,10 @@ export default function ProfileEditForm() {
     }
   }, [previewUrl]);
 
-  useEffect(() => {
-    if (!toast) {
-      return undefined;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setToast(null);
-    }, toast.variant === 'error' ? 4000 : 3000);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [toast]);
-
   const handleProfileImageChange = (event) => {
     const [file] = event.target.files;
     setImageError('');
-    setToast(null);
+    closeToast();
 
     if (!file) {
       return;
@@ -80,7 +74,7 @@ export default function ProfileEditForm() {
   };
 
   const handleProfileUpdate = async (values) => {
-    setToast(null);
+    closeToast();
 
     try {
       const updatedProfile = await updateUserProfile(values, auth.accessToken);
@@ -90,17 +84,13 @@ export default function ProfileEditForm() {
         profileImage: null,
       });
       setPreviewUrl(getFullImageUrl(updatedProfile.profileImage));
-      setToast({
-        message: '변경사항을 저장했습니다.',
-        variant: 'success',
-      });
+      showSuccess('변경사항을 저장했습니다.');
     } catch (error) {
-      setToast({
-        message: error.message === 'DUPLICATE_NICKNAME'
+      showError(
+        error.message === 'DUPLICATE_NICKNAME'
           ? '이미 사용 중인 닉네임입니다.'
           : error.message || '회원 정보 변경에 실패했습니다.',
-        variant: 'error',
-      });
+      );
     }
   };
 
@@ -158,7 +148,7 @@ export default function ProfileEditForm() {
           error={errors.nickname?.message}
           {...register('nickname', {
             onChange: () => {
-              setToast(null);
+              closeToast();
             },
           })}
         />
@@ -177,7 +167,7 @@ export default function ProfileEditForm() {
       {toast && (
         <Toast
           variant={toast.variant}
-          onClose={() => setToast(null)}
+          onClose={closeToast}
         >
           {toast.message}
         </Toast>

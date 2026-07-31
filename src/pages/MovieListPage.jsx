@@ -1,88 +1,20 @@
-import { useEffect, useRef, useState } from 'react';
-import { getMovies } from '@/api/movies';
 import MovieFeedback from '@/components/movie/MovieFeedback';
 import MovieGridList from '@/components/movie/MovieGridList';
 import MovieGridSkeleton from '@/components/movie/MovieGridSkeleton';
+import useInfiniteMovies from '@/hooks/useInfiniteMovies';
 
 const MOVIES_PER_PAGE = 30;
 
 export default function MovieListPage() {
-  const loadMoreRef = useRef(null);
-  const [movies, setMovies] = useState([]);
-  const [pageToLoad, setPageToLoad] = useState(1);
-  const [nextPage, setNextPage] = useState(null);
-  const [hasNext, setHasNext] = useState(true);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [retryCount, setRetryCount] = useState(0);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const isFirstPage = pageToLoad === 1;
-
-    async function loadMovies() {
-      if (isFirstPage) {
-        setIsInitialLoading(true);
-      } else {
-        setIsLoadingMore(true);
-      }
-      setErrorMessage('');
-
-      try {
-        const data = await getMovies(pageToLoad, MOVIES_PER_PAGE, {
-          signal: controller.signal,
-        });
-
-        setMovies((currentMovies) => {
-          if (pageToLoad === 1) {
-            return data.movies;
-          }
-
-          const movieIds = new Set(currentMovies.map((movie) => movie.tmdbMovieId));
-          const nextMovies = data.movies.filter(
-            (movie) => !movieIds.has(movie.tmdbMovieId),
-          );
-
-          return [...currentMovies, ...nextMovies];
-        });
-        setNextPage(data.nextPage);
-        setHasNext(data.hasNext);
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          setErrorMessage(error.message || '영화 목록을 불러오지 못했습니다.');
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setIsInitialLoading(false);
-          setIsLoadingMore(false);
-        }
-      }
-    }
-
-    loadMovies();
-    return () => controller.abort();
-  }, [pageToLoad, retryCount]);
-
-  useEffect(() => {
-    const target = loadMoreRef.current;
-
-    if (!target || !hasNext || !nextPage || isLoadingMore || errorMessage) {
-      return undefined;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setPageToLoad(nextPage);
-        }
-      },
-      { rootMargin: '500px 0px' },
-    );
-
-    observer.observe(target);
-    return () => observer.disconnect();
-  }, [errorMessage, hasNext, isLoadingMore, nextPage]);
+  const {
+    errorMessage,
+    hasNext,
+    isInitialLoading,
+    isLoadingMore,
+    loadMoreRef,
+    movies,
+    retry,
+  } = useInfiniteMovies({ limit: MOVIES_PER_PAGE });
 
   if (isInitialLoading) {
     return <MovieGridSkeleton />;
@@ -92,7 +24,7 @@ export default function MovieListPage() {
     return (
       <MovieFeedback
         description={errorMessage}
-        onRetry={() => setRetryCount((count) => count + 1)}
+        onRetry={retry}
         title="영화 목록을 불러오지 못했습니다."
       />
     );
@@ -114,7 +46,7 @@ export default function MovieListPage() {
       isLoadingMore={isLoadingMore}
       loadMoreRef={loadMoreRef}
       movies={movies}
-      onRetry={() => setRetryCount((count) => count + 1)}
+      onRetry={retry}
     />
   );
 }

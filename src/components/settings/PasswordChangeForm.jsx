@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { updateUserPassword } from '@/api/user';
@@ -6,12 +5,18 @@ import Button from '@/components/button/Button';
 import FormInput from '@/components/input/FormInput';
 import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
+import useToast from '@/hooks/useToast';
 import { passwordChangeSchema } from '@/schema/user';
 import styles from '@/components/settings/PasswordChangeForm.module.scss';
 
 export default function PasswordChangeForm() {
   const { auth } = useAuth();
-  const [toast, setToast] = useState(null);
+  const {
+    closeToast,
+    showError,
+    showSuccess,
+    toast,
+  } = useToast();
   const {
     register,
     handleSubmit,
@@ -29,33 +34,15 @@ export default function PasswordChangeForm() {
   const values = watch();
   const isFormValid = passwordChangeSchema.safeParse(values).success;
 
-  useEffect(() => {
-    if (!toast) {
-      return undefined;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setToast(null);
-    }, toast.variant === 'error' ? 4000 : 3000);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [toast]);
-
   const handlePasswordChange = async (formValues) => {
-    setToast(null);
+    closeToast();
 
     try {
       await updateUserPassword(formValues, auth.accessToken);
       reset();
-      setToast({
-        message: '비밀번호를 변경했습니다.',
-        variant: 'success',
-      });
+      showSuccess('비밀번호를 변경했습니다.');
     } catch (error) {
-      setToast({
-        message: error.message || '비밀번호 변경에 실패했습니다.',
-        variant: 'error',
-      });
+      showError(error.message || '비밀번호 변경에 실패했습니다.');
     }
   };
 
@@ -73,7 +60,7 @@ export default function PasswordChangeForm() {
           autoComplete="new-password"
           error={errors.password?.message}
           {...register('password', {
-            onChange: () => setToast(null),
+            onChange: closeToast,
           })}
         />
         <FormInput
@@ -83,7 +70,7 @@ export default function PasswordChangeForm() {
           autoComplete="new-password"
           error={errors.passwordConfirm?.message}
           {...register('passwordConfirm', {
-            onChange: () => setToast(null),
+            onChange: closeToast,
           })}
         />
 
@@ -101,7 +88,7 @@ export default function PasswordChangeForm() {
       {toast && (
         <Toast
           variant={toast.variant}
-          onClose={() => setToast(null)}
+          onClose={closeToast}
         >
           {toast.message}
         </Toast>
