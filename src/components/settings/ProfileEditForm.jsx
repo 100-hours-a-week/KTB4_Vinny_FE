@@ -78,7 +78,7 @@ export default function ProfileEditForm() {
       showSuccess('변경사항을 저장했습니다.');
     } catch (error) {
       showError(
-        error.message === 'DUPLICATE_NICKNAME'
+        error.code === 'DUPLICATE_NICKNAME'
           ? '이미 사용 중인 닉네임입니다.'
           : error.message || '회원 정보 변경에 실패했습니다.',
       );

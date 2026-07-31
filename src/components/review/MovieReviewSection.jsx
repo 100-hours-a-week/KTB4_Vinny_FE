@@ -9,7 +9,7 @@ import useReviews from '@/hooks/useReviews';
 import useToast from '@/hooks/useToast';
 import styles from '@/components/review/MovieReviewSection.module.scss';
 
-function getReviewErrorMessage(message) {
+function getReviewErrorMessage(error) {
   const messages = {
     REVIEW_BAD_REQUEST: '리뷰 내용과 별점을 확인해주세요.',
     REVIEW_NOT_FOUND: '리뷰를 찾을 수 없습니다.',
@@ -17,7 +17,9 @@ function getReviewErrorMessage(message) {
     FORBIDDEN_ACCESS: '리뷰를 변경할 권한이 없습니다.',
   };
 
-  return messages[message] || message || '리뷰 요청에 실패했습니다.';
+  return messages[error?.code]
+    || error?.message
+    || '리뷰 요청에 실패했습니다.';
 }
 
 export default function MovieReviewSection({
@@ -39,7 +41,7 @@ export default function MovieReviewSection({
   const accessToken = auth?.accessToken;
   const {
     create,
-    errorMessage,
+    error,
     isDeleting,
     isLoading,
     isSaving,
@@ -50,8 +52,8 @@ export default function MovieReviewSection({
     update,
   } = useReviews({ accessToken, tmdbMovieId });
   const hasOwnReview = reviews.some((review) => review.isOwner);
-  const listError = errorMessage
-    ? getReviewErrorMessage(errorMessage)
+  const listError = error
+    ? getReviewErrorMessage(error)
     : '';
 
   const handleReviewSubmit = async (payload) => {
@@ -78,7 +80,7 @@ export default function MovieReviewSection({
       onMovieChange();
       return true;
     } catch (error) {
-      showError(getReviewErrorMessage(error.message));
+      showError(getReviewErrorMessage(error));
       return false;
     }
   };
@@ -108,7 +110,7 @@ export default function MovieReviewSection({
       showSuccess('리뷰를 삭제했습니다.');
       onMovieChange();
     } catch (error) {
-      showError(getReviewErrorMessage(error.message));
+      showError(getReviewErrorMessage(error));
     }
   };
 

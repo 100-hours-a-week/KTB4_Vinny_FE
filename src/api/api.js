@@ -2,6 +2,19 @@ import ky, { HTTPError, TimeoutError } from 'ky';
 
 export const AUTH_UNAUTHORIZED_EVENT = 'auth:unauthorized';
 
+export class ApiError extends Error {
+  constructor({
+    code,
+    message = '요청에 실패했습니다.',
+    status,
+  } = {}) {
+    super(message);
+    this.name = 'ApiError';
+    this.code = code;
+    this.status = status;
+  }
+}
+
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   ? `${import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '')}/`
   : undefined;
@@ -34,7 +47,10 @@ export async function request(path, options) {
     const apiResponse = await response.json();
 
     if (apiResponse?.success === false) {
-      throw new Error(apiResponse.message || '요청에 실패했습니다.');
+      throw new ApiError({
+        code: apiResponse.message,
+        status: response.status,
+      });
     }
 
     return apiResponse?.data;
@@ -49,7 +65,10 @@ export async function request(path, options) {
         window.dispatchEvent(new Event(AUTH_UNAUTHORIZED_EVENT));
       }
 
-      throw new Error(apiError?.message || '요청에 실패했습니다.');
+      throw new ApiError({
+        code: apiError?.message,
+        status: error.response.status,
+      });
     }
 
     if (error instanceof TimeoutError) {

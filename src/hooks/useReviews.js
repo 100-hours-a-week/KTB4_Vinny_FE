@@ -12,7 +12,7 @@ export default function useReviews({ accessToken, tmdbMovieId }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [error, setError] = useState(null);
 
   const applyReviewList = useCallback((data) => {
     setReviews(data.reviews);
@@ -23,7 +23,7 @@ export default function useReviews({ accessToken, tmdbMovieId }) {
     if (showLoading) {
       setIsLoading(true);
     }
-    setErrorMessage('');
+    setError(null);
 
     try {
       const data = await getReviews(tmdbMovieId, accessToken, { signal });
@@ -31,7 +31,7 @@ export default function useReviews({ accessToken, tmdbMovieId }) {
       return data;
     } catch (error) {
       if (error.name !== 'AbortError') {
-        setErrorMessage(error.message || '리뷰 목록을 불러오지 못했습니다.');
+        setError(error);
       }
       throw error;
     } finally {
@@ -93,7 +93,7 @@ export default function useReviews({ accessToken, tmdbMovieId }) {
 
   return {
     create,
-    errorMessage,
+    error,
     isDeleting,
     isLoading,
     isSaving,
