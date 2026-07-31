@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Button from '@/components/Button/Button';
+import Button from '@/components/button/Button';
 import styles from '@/components/review/ReviewForm.module.scss';
 
 const MAX_CONTENT_LENGTH = 500;

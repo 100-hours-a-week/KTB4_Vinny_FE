@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import styles from '@/components/Button/Button.module.scss';
+import styles from '@/components/button/Button.module.scss';
 
 export default function Button({
   children,

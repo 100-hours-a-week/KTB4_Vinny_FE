@@ -1,4 +1,4 @@
-import Button from '@/components/Button/Button';
+import Button from '@/components/button/Button';
 import styles from '@/components/movie/MovieFeedback.module.scss';
 
 export default function MovieFeedback({
