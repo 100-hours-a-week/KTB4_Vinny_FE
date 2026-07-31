@@ -1,5 +1,5 @@
 import { request } from '@/api/api';
-import { movieListSchema } from '@/schema/movie';
+import { movieDetailSchema, movieListSchema } from '@/schema/movie';
 
 async function getMovieList(searchParams, options) {
   const data = await request(`movies?${searchParams.toString()}`, options);
@@ -31,4 +31,15 @@ export function getMovies(page = 1, limit = 30, options) {
     page: String(page),
     limit: String(limit),
   }), options);
+}
+
+export async function getMovieDetail(tmdbMovieId, options) {
+  const data = await request(`movies/${tmdbMovieId}`, options);
+  const result = movieDetailSchema.safeParse(data);
+
+  if (!result.success) {
+    throw new Error('영화 상세 응답 형식이 올바르지 않습니다.');
+  }
+
+  return result.data;
 }
