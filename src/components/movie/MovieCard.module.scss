@@ -48,7 +48,7 @@
   background:
     radial-gradient(circle at 50% 32%, colors.$gray300, transparent 28%),
     linear-gradient(145deg, colors.$gray700, colors.$gray900);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 900;
   letter-spacing: 0.08em;
 }
@@ -65,7 +65,7 @@
   margin: 0;
   overflow: hidden;
   color: colors.$color-text-primary;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 750;
   line-height: 1.35;
   text-overflow: ellipsis;
@@ -78,7 +78,7 @@
   gap: 3px;
   margin: 0;
   color: colors.$color-rating;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1.35;
 }

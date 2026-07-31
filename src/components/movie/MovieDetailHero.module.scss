@@ -95,7 +95,7 @@
   background:
     radial-gradient(circle at 50% 32%, colors.$gray300, transparent 28%),
     linear-gradient(145deg, colors.$gray700, colors.$gray900);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 900;
   letter-spacing: 0.08em;
 }
@@ -105,7 +105,7 @@
 
   h1 {
     margin: 0;
-    font-size: clamp(30px, 4vw, 40px);
+    font-size: clamp(28px, 4vw, 36px);
     font-weight: 900;
     line-height: 1.15;
     letter-spacing: -0.045em;
@@ -116,7 +116,7 @@
 .metadata {
   margin: 12px 0 0;
   color: colors.$gray100;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -128,14 +128,14 @@
   color: colors.$color-rating;
 
   strong {
-    font-size: 38px;
+    font-size: 34px;
     font-weight: 900;
     letter-spacing: -0.035em;
   }
 }
 
 .star {
-  font-size: 36px;
+  font-size: 33px;
 }
 
 .reviewCount {
@@ -149,7 +149,7 @@
   max-width: 690px;
   margin: 24px 0 0;
   color: colors.$gray100;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1.75;
   text-wrap: pretty;
@@ -182,7 +182,7 @@
 
   .content {
     h1 {
-      font-size: 26px;
+      font-size: 24px;
     }
   }
 
@@ -197,12 +197,12 @@
     margin-top: 16px;
 
     strong {
-      font-size: 28px;
+      font-size: 26px;
     }
   }
 
   .star {
-    font-size: 26px;
+    font-size: 24px;
   }
 
   .reviewCount {

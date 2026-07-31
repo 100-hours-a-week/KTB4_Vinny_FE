@@ -31,7 +31,7 @@
   background-size: cover;
   border: 1px solid rgba(colors.$white, 0.12);
   border-radius: 50%;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 850;
 }
 
@@ -41,7 +41,7 @@
   strong {
     display: block;
     overflow: hidden;
-    font-size: 14px;
+    font-size: 13px;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -85,7 +85,7 @@
 .content {
   margin: 2px 0 0;
   color: colors.$gray100;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 1.75;
   overflow-wrap: anywhere;

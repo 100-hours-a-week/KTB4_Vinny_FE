@@ -30,13 +30,13 @@
   &::before {
     content: 'CINE';
     color: colors.$color-text-primary;
-    font-size: 25px;
+    font-size: 23px;
   }
 
   &::after {
     content: 'ON';
     color: colors.$color-action-primary;
-    font-size: 25px;
+    font-size: 23px;
     text-shadow: 0 0 18px rgba(colors.$color-action-primary, 0.36);
   }
 }
@@ -64,7 +64,7 @@
   border: 1px solid rgba(colors.$white, 0.12);
   border-radius: 50%;
   color: colors.$color-text-primary;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   line-height: 36px;
   text-align: center;
