@@ -1,10 +1,13 @@
 import {
+  useEffect,
   useMemo,
   useState,
 } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   login as requestLogin,
 } from '@/api/auth';
+import { AUTH_UNAUTHORIZED_EVENT } from '@/api/api';
 import { getUser } from '@/api/user';
 import { AuthContext } from '@/context/auth-context';
 
@@ -22,8 +25,24 @@ function readStoredValue(key) {
 }
 
 export default function AuthProvider({ children }) {
+  const navigate = useNavigate();
   const [auth, setAuth] = useState(() => readStoredValue(AUTH_STORAGE_KEY));
   const [user, setUser] = useState(() => readStoredValue(USER_STORAGE_KEY));
+
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      localStorage.removeItem(USER_STORAGE_KEY);
+      setAuth(null);
+      setUser(null);
+      navigate('/login', { replace: true });
+    };
+
+    window.addEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
+    return () => {
+      window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
+    };
+  }, [navigate]);
 
   const login = async (credentials) => {
     const nextAuth = await requestLogin(credentials);

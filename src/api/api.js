@@ -1,5 +1,7 @@
 import ky, { HTTPError, TimeoutError } from 'ky';
 
+export const AUTH_UNAUTHORIZED_EVENT = 'auth:unauthorized';
+
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   ? `${import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '')}/`
   : undefined;
@@ -8,6 +10,14 @@ const api = ky.create({
   baseUrl: API_BASE_URL,
   timeout: 5000,
 });
+
+function hasAuthorizationHeader(headers) {
+  if (!headers) {
+    return false;
+  }
+
+  return new Headers(headers).has('Authorization');
+}
 
 export async function request(path, options) {
   if (!API_BASE_URL) {
@@ -31,6 +41,13 @@ export async function request(path, options) {
   } catch (error) {
     if (error instanceof HTTPError) {
       const apiError = await error.response.json().catch(() => null);
+
+      if (
+        error.response.status === 401
+        && hasAuthorizationHeader(options?.headers)
+      ) {
+        window.dispatchEvent(new Event(AUTH_UNAUTHORIZED_EVENT));
+      }
 
       throw new Error(apiError?.message || '요청에 실패했습니다.');
     }
