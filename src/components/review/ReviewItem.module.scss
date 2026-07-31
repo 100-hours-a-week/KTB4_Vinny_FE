@@ -1,0 +1,171 @@
+@use '@/styles/variables/colors' as colors;
+
+.item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr) 34px;
+  align-items: start;
+  gap: 24px;
+  min-height: 126px;
+  padding: 20px 22px;
+  background: rgba(colors.$white, 0.035);
+  border: 1px solid rgba(colors.$white, 0.08);
+  border-radius: 10px;
+}
+
+.author {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  color: colors.$color-text-primary;
+  background-color: colors.$color-surface-muted;
+  background-position: center;
+  background-size: cover;
+  border: 1px solid rgba(colors.$white, 0.12);
+  border-radius: 50%;
+  font-size: 17px;
+  font-weight: 850;
+}
+
+.authorInfo {
+  min-width: 0;
+
+  strong {
+    display: block;
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  time {
+    display: block;
+    margin-top: 12px;
+    color: colors.$color-text-muted;
+    font-size: 11px;
+    font-weight: 650;
+  }
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 7px 0 0;
+  color: colors.$color-rating;
+  font-size: 11px;
+  letter-spacing: -1px;
+
+  b {
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+}
+
+.ratingStars {
+  position: relative;
+  display: inline-block;
+
+  span:last-child {
+    position: absolute;
+    inset: 0;
+    width: var(--rating-fill);
+    overflow: hidden;
+  }
+}
+
+.content {
+  margin: 2px 0 0;
+  color: colors.$gray100;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.menuWrap {
+  position: relative;
+  justify-self: end;
+}
+
+.menuButton {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: colors.$color-text-muted;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  font-size: 13px;
+  letter-spacing: 1px;
+
+  &:hover,
+  &:focus-visible {
+    color: colors.$color-text-primary;
+    background: colors.$color-surface-hover;
+  }
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-action-primary;
+  }
+}
+
+.menu {
+  position: absolute;
+  z-index: 2;
+  top: calc(100% + 5px);
+  right: 0;
+  width: 108px;
+  padding: 6px;
+  background: colors.$gray700;
+  border: 1px solid rgba(colors.$white, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(colors.$black, 0.45);
+
+  button {
+    width: 100%;
+    padding: 9px 10px;
+    color: colors.$color-text-primary;
+    background: transparent;
+    border: 0;
+    border-radius: 5px;
+    font-size: 12px;
+    text-align: left;
+
+    &:hover,
+    &:focus-visible {
+      background: colors.$color-surface-hover;
+      outline: none;
+    }
+  }
+
+  .deleteButton {
+    color: colors.$color-danger;
+  }
+}
+
+@media (max-width: 700px) {
+  .item {
+    grid-template-columns: minmax(0, 1fr) 34px;
+  }
+
+  .content {
+    grid-column: 1 / -1;
+  }
+
+  .menuWrap {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}

@@ -1,7 +1,7 @@
 @use '@/styles/variables/colors' as colors;
 
 .detail {
-  padding-block: 34px 88px;
+  padding-block: 34px 30px;
 }
 
 .breadcrumb {
@@ -169,7 +169,7 @@
 
 @media (max-width: 620px) {
   .detail {
-    padding-block: 24px 60px;
+    padding-block: 24px 24px;
   }
 
   .hero {

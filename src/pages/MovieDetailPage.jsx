@@ -4,6 +4,7 @@ import { getMovieDetail } from '@/api/movies';
 import MovieDetailHero from '@/components/movie/MovieDetailHero';
 import MovieDetailSkeleton from '@/components/movie/MovieDetailSkeleton';
 import MovieFeedback from '@/components/movie/MovieFeedback';
+import MovieReviewSection from '@/components/review/MovieReviewSection';
 
 function getDetailErrorMessage(message) {
   if (message === 'MOVIE_NOT_FOUND') {
@@ -71,5 +72,10 @@ export default function MovieDetailPage() {
     );
   }
 
-  return <MovieDetailHero movie={movie} />;
+  return (
+    <>
+      <MovieDetailHero movie={movie} />
+      <MovieReviewSection />
+    </>
+  );
 }

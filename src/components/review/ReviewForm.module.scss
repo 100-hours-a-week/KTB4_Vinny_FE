@@ -1,0 +1,178 @@
+@use '@/styles/variables/colors' as colors;
+
+.form {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 30px;
+  padding: 28px;
+  background: rgba(colors.$white, 0.035);
+  border: 1px solid rgba(colors.$white, 0.08);
+  border-radius: 12px;
+}
+
+.ratingArea {
+  padding-right: 30px;
+  border-right: 1px solid rgba(colors.$white, 0.08);
+
+  h2 {
+    margin: 0 0 20px;
+    font-size: 17px;
+  }
+
+  p {
+    margin: 13px 0 0;
+    color: colors.$color-text-muted;
+    font-size: 12px;
+    text-align: center;
+  }
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  width: fit-content;
+  margin: 0 auto;
+  border-radius: 6px;
+
+  button {
+    width: 36px;
+    height: 40px;
+    padding: 0;
+    color: colors.$color-action-primary;
+    background: transparent;
+    border: 0;
+    border-radius: 5px;
+    font-size: 38px;
+    line-height: 1;
+    text-align: center;
+    text-shadow: 0 1px 0 rgba(colors.$gray900, 0.08);
+    transition:
+      color 140ms ease,
+      transform 140ms ease;
+
+    &:hover,
+    &:focus-visible {
+      transform: translateY(-2px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid colors.$color-action-primary;
+      outline-offset: 2px;
+    }
+  }
+}
+
+.activeStar {
+  animation: starPop 180ms ease;
+}
+
+@keyframes starPop {
+  50% {
+    transform: translateY(-2px) scale(1.08);
+  }
+}
+
+.contentArea {
+  display: flex;
+  flex-direction: column;
+
+  > label {
+    margin-bottom: 16px;
+    font-size: 17px;
+    font-weight: 800;
+  }
+}
+
+.textareaWrap {
+  position: relative;
+
+  textarea {
+    width: 100%;
+    min-height: 112px;
+    padding: 16px 18px 32px;
+    resize: vertical;
+    color: colors.$color-text-primary;
+    background: rgba(colors.$white, 0.035);
+    border: 1px solid rgba(colors.$white, 0.1);
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+
+    &::placeholder {
+      color: colors.$color-text-muted;
+    }
+
+    &:focus {
+      border-color: colors.$color-action-primary;
+      outline: none;
+    }
+
+    &[readonly] {
+      cursor: pointer;
+    }
+  }
+
+  span {
+    position: absolute;
+    right: 13px;
+    bottom: 12px;
+    color: colors.$color-text-muted;
+    font-size: 11px;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.completed {
+  padding: 28px;
+  text-align: center;
+  background: rgba(colors.$white, 0.035);
+  border: 1px solid rgba(colors.$white, 0.08);
+  border-radius: 12px;
+
+  strong {
+    font-size: 16px;
+  }
+
+  p {
+    margin: 9px 0 0;
+    color: colors.$color-text-muted;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 760px) {
+  .form {
+    grid-template-columns: 1fr;
+  }
+
+  .ratingArea {
+    padding: 0 0 24px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(colors.$white, 0.08);
+  }
+}
+
+@media (max-width: 560px) {
+  .form {
+    padding: 22px 18px;
+  }
+
+  .stars button {
+    width: 32px;
+    height: 36px;
+    font-size: 34px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activeStar {
+    animation: none;
+  }
+}
