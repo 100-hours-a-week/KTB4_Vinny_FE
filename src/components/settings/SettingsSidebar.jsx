@@ -121,7 +121,7 @@ export default function SettingsSidebar() {
       <ConfirmDialog
         open={isWithdrawalDialogOpen}
         title="회원탈퇴 하시겠습니까?"
-        description="작성한 리뷰와 댓글은 알 수 없음 처리 됩니다."
+        description="작성한 리뷰는 알 수 없음 처리 됩니다."
         confirmLabel="확인"
         isPending={isDeleting}
         onCancel={() => setIsWithdrawalDialogOpen(false)}

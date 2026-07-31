@@ -22,7 +22,7 @@ export const profileEditResponseSchema = z.object({
   profileImage: z.string().nullable(),
 });
 
-export const passwordChangeSchema = z
+export const passwordEditSchema = z
   .object({
     password: passwordSchema,
     passwordConfirm: passwordConfirmSchema,

@@ -6,10 +6,10 @@ import FormInput from '@/components/input/FormInput';
 import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
 import useToast from '@/hooks/useToast';
-import { passwordChangeSchema } from '@/schema/user';
-import styles from '@/components/settings/PasswordChangeForm.module.scss';
+import { passwordEditSchema } from '@/schema/user';
+import styles from '@/components/settings/PasswordEditForm.module.scss';
 
-export default function PasswordChangeForm() {
+export default function PasswordEditForm() {
   const { auth } = useAuth();
   const {
     closeToast,
@@ -24,7 +24,7 @@ export default function PasswordChangeForm() {
     watch,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(passwordChangeSchema),
+    resolver: zodResolver(passwordEditSchema),
     mode: 'onBlur',
     defaultValues: {
       password: '',
@@ -32,9 +32,9 @@ export default function PasswordChangeForm() {
     },
   });
   const values = watch();
-  const isFormValid = passwordChangeSchema.safeParse(values).success;
+  const isFormValid = passwordEditSchema.safeParse(values).success;
 
-  const handlePasswordChange = async (formValues) => {
+  const handlePasswordEdit = async (formValues) => {
     closeToast();
 
     try {
@@ -50,7 +50,7 @@ export default function PasswordChangeForm() {
     <>
       <form
         className={styles.form}
-        onSubmit={handleSubmit(handlePasswordChange)}
+        onSubmit={handleSubmit(handlePasswordEdit)}
         noValidate
       >
         <FormInput
