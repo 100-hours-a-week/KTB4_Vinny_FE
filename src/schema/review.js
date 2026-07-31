@@ -17,6 +17,4 @@ export const reviewSchema = z.object({
 export const reviewListSchema = z.object({
   totalReviews: z.number().int().nonnegative(),
   reviews: z.array(reviewSchema),
-  nextCursor: z.string().nullable(),
-  hasNext: z.boolean(),
 });
