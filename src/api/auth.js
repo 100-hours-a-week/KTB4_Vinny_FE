@@ -1,4 +1,4 @@
-import { request } from '@/api/api';
+import { createAuthorizationHeaders, request } from '@/api/api';
 import {
   loginResponseSchema,
   signupResponseSchema,
@@ -46,8 +46,6 @@ export async function signup(payload) {
 export async function logout(accessToken) {
   await request('logout', {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
+    headers: createAuthorizationHeaders(accessToken),
   });
 }

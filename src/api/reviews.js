@@ -1,19 +1,13 @@
-import { request } from '@/api/api';
+import { createAuthorizationHeaders, request } from '@/api/api';
 import {
   reviewListSchema,
   reviewSchema,
 } from '@/schema/review';
 
-function getAuthorizationHeaders(accessToken) {
-  return accessToken
-    ? { Authorization: `Bearer ${accessToken}` }
-    : undefined;
-}
-
 export async function getReviews(tmdbMovieId, accessToken, options) {
   const data = await request(`movies/${tmdbMovieId}/reviews`, {
     ...options,
-    headers: getAuthorizationHeaders(accessToken),
+    headers: createAuthorizationHeaders(accessToken),
   });
   const result = reviewListSchema.safeParse(data);
 
@@ -27,7 +21,7 @@ export async function getReviews(tmdbMovieId, accessToken, options) {
 export async function createReview(tmdbMovieId, payload, accessToken) {
   await request(`movies/${tmdbMovieId}/reviews`, {
     method: 'POST',
-    headers: getAuthorizationHeaders(accessToken),
+    headers: createAuthorizationHeaders(accessToken),
     json: payload,
   });
 }
@@ -35,7 +29,7 @@ export async function createReview(tmdbMovieId, payload, accessToken) {
 export async function updateReview(reviewId, payload, accessToken) {
   const data = await request(`reviews/${reviewId}`, {
     method: 'PUT',
-    headers: getAuthorizationHeaders(accessToken),
+    headers: createAuthorizationHeaders(accessToken),
     json: payload,
   });
   const result = reviewSchema.safeParse(data);
@@ -50,6 +44,6 @@ export async function updateReview(reviewId, payload, accessToken) {
 export async function deleteReview(reviewId, accessToken) {
   await request(`reviews/${reviewId}`, {
     method: 'DELETE',
-    headers: getAuthorizationHeaders(accessToken),
+    headers: createAuthorizationHeaders(accessToken),
   });
 }

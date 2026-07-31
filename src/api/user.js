@@ -1,11 +1,9 @@
-import { request } from '@/api/api';
+import { createAuthorizationHeaders, request } from '@/api/api';
 import { profileEditResponseSchema, userSchema } from '@/schema/user';
 
 export async function getUser(accessToken) {
   const data = await request('users/me', {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
+    headers: createAuthorizationHeaders(accessToken),
   });
   const result = userSchema.safeParse(data);
 
@@ -27,9 +25,7 @@ export async function updateUserProfile(payload, accessToken) {
 
   const data = await request('users/me/profile', {
     method: 'PATCH',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
+    headers: createAuthorizationHeaders(accessToken),
     body: formData,
   });
   const result = profileEditResponseSchema.safeParse(data);
@@ -44,9 +40,7 @@ export async function updateUserProfile(payload, accessToken) {
 export async function updateUserPassword(payload, accessToken) {
   await request('users/me/password', {
     method: 'PATCH',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
+    headers: createAuthorizationHeaders(accessToken),
     json: payload,
   });
 }
@@ -54,8 +48,6 @@ export async function updateUserPassword(payload, accessToken) {
 export async function deleteUser(accessToken) {
   await request('users/me', {
     method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
+    headers: createAuthorizationHeaders(accessToken),
   });
 }

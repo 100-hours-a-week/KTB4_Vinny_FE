@@ -19,6 +19,12 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   ? `${import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '')}/`
   : undefined;
 
+export function createAuthorizationHeaders(accessToken) {
+  return accessToken
+    ? { Authorization: `Bearer ${accessToken}` }
+    : undefined;
+}
+
 const api = ky.create({
   baseUrl: API_BASE_URL,
   timeout: 5000,
