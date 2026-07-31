@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import SettingsSidebar from '@/components/settings/SettingsSidebar';
 import { useAuth } from '@/context/auth-context';
-import styles from '@/layout/SettingsLayout.module.scss';
+import styles from '@/layout/Layout.module.scss';
 
 export default function SettingsLayout() {
   const { isLoggedIn } = useAuth();
