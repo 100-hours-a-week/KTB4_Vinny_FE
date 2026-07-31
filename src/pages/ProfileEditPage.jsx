@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { updateUserProfile } from '@/api/user';
 import Button from '@/components/button/Button';
-import FormInput from '@/components/forminput/FormInput';
+import FormInput from '@/components/input/FormInput';
 import SectionHeader from '@/components/settings/SectionHeader';
 import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';

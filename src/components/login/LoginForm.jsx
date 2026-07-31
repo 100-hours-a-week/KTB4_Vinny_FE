@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import AuthHeader from '@/components/auth/AuthHeader';
 import Button from '@/components/button/Button';
-import FormInput from '@/components/forminput/FormInput';
+import FormInput from '@/components/input/FormInput';
 import { useAuth } from '@/context/auth-context';
 import { loginSchema } from '@/schema/auth';
 import styles from '@/components/login/LoginForm.module.scss';

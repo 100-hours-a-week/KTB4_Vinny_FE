@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import styles from '@/components/FormInput/FormInput.module.scss';
+import styles from '@/components/input/FormInput.module.scss';
 
 export default function FormInput({
   id,
