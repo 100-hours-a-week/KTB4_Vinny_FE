@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +5,7 @@ import { signup } from '@/api/auth';
 import AuthHeader from '@/components/auth/AuthHeader';
 import Button from '@/components/button/Button';
 import FormInput from '@/components/input/FormInput';
+import ProfileImageInput from '@/components/input/ProfileImageInput';
 import Toast from '@/components/toast/Toast';
 import useImagePreview from '@/hooks/useImagePreview';
 import useToast from '@/hooks/useToast';
@@ -14,7 +14,6 @@ import styles from '@/components/signup/SignupForm.module.scss';
 
 export default function SignupForm() {
   const navigate = useNavigate();
-  const profileInputRef = useRef(null);
   const { previewUrl, setPreviewImage } = useImagePreview();
   const {
     closeToast,
@@ -75,29 +74,14 @@ export default function SignupForm() {
 
       <div className={styles.profileUpload}>
         <span className={styles.profileLabel}>프로필 사진</span>
-        <input
-          ref={profileInputRef}
-          className={styles.profileInput}
-          type="file"
-          accept="image/*"
+        <ProfileImageInput
+          previewUrl={previewUrl}
           onChange={handleProfileImageChange}
+          ariaLabel="프로필 사진 추가"
+          imageAlt="선택한 프로필 사진"
+          fallback={<span aria-hidden="true">+</span>}
+          buttonClassName={styles.profilePreview}
         />
-        <button
-          className={styles.profilePreview}
-          type="button"
-          aria-label="프로필 사진 추가"
-          onClick={() => profileInputRef.current?.click()}
-        >
-          {previewUrl ? (
-            <img
-              className={styles.profileImage}
-              src={previewUrl}
-              alt="선택한 프로필 사진"
-            />
-          ) : (
-            <span aria-hidden="true">+</span>
-          )}
-        </button>
       </div>
 
       <form

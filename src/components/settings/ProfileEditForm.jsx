@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { updateUserProfile } from '@/api/user';
 import Button from '@/components/button/Button';
 import FormInput from '@/components/input/FormInput';
+import ProfileImageInput from '@/components/input/ProfileImageInput';
 import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
 import useImagePreview from '@/hooks/useImagePreview';
@@ -16,7 +17,6 @@ const MAX_PROFILE_IMAGE_SIZE = 10 * 1024 * 1024;
 
 export default function ProfileEditForm() {
   const { auth, user, updateUser } = useAuth();
-  const profileInputRef = useRef(null);
   const { previewUrl, setPreviewImage } = useImagePreview(
     getFullImageUrl(user.profileImage),
   );
@@ -98,29 +98,21 @@ export default function ProfileEditForm() {
             <p>10MB 이하의 이미지 파일을 사용할 수 있습니다.</p>
           </div>
           <div className={styles.imageControl}>
-            <input
-              ref={profileInputRef}
-              className={styles.profileInput}
-              type="file"
-              accept="image/*"
+            <ProfileImageInput
+              previewUrl={previewUrl}
               onChange={handleProfileImageChange}
-            />
-            <button
-              className={styles.profilePreview}
-              type="button"
-              aria-label="프로필 사진 변경"
-              onClick={() => profileInputRef.current?.click()}
-            >
-              {previewUrl ? (
-                <img src={previewUrl} alt="현재 프로필" />
-              ) : (
+              ariaLabel="프로필 사진 변경"
+              imageAlt="현재 프로필"
+              fallback={(
                 <span className={styles.initial}>
                   {user.nickname.trim().charAt(0)}
                 </span>
               )}
-              <span className={styles.changeLabel}>변경</span>
-            </button>
-            {imageError && <p className={styles.imageError}>{imageError}</p>}
+              overlay={<span className={styles.changeLabel}>변경</span>}
+              buttonClassName={styles.profilePreview}
+              error={imageError}
+              errorClassName={styles.imageError}
+            />
           </div>
         </div>
 
