@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { logout as requestLogout } from '@/api/auth';
+import { NavLink } from 'react-router-dom';
 import { deleteUser } from '@/api/user';
 import ConfirmDialog from '@/components/dialog/ConfirmDialog';
 import Toast from '@/components/toast/Toast';
@@ -10,9 +9,12 @@ import { getFullImageUrl } from '@/utils/image';
 import styles from '@/components/settings/SettingsSidebar.module.scss';
 
 export default function SettingsSidebar() {
-  const navigate = useNavigate();
-  const { auth, user, logout } = useAuth();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const {
+    auth,
+    isLoggingOut,
+    logout,
+    user,
+  } = useAuth();
   const [isWithdrawalDialogOpen, setIsWithdrawalDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const {
@@ -28,16 +30,7 @@ export default function SettingsSidebar() {
       return;
     }
 
-    setIsLoggingOut(true);
-
-    try {
-      await requestLogout(auth.accessToken);
-    } catch {
-      // 서버 세션 정리에 실패해도 클라이언트 로그아웃은 계속 진행
-    } finally {
-      logout();
-      navigate('/', { replace: true });
-    }
+    await logout();
   };
 
   const handleWithdrawal = async () => {
@@ -45,8 +38,7 @@ export default function SettingsSidebar() {
 
     try {
       await deleteUser(auth.accessToken);
-      logout();
-      navigate('/', { replace: true });
+      await logout({ requestServer: false });
     } catch (error) {
       setIsWithdrawalDialogOpen(false);
       showError(error.message || '회원 탈퇴에 실패했습니다.');

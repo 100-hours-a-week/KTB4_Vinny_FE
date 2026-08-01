@@ -9,6 +9,7 @@ import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
 import useToast from '@/hooks/useToast';
 import { loginSchema } from '@/schema/auth';
+import { getAndClearLoginRedirectPath } from '@/utils/authRedirect';
 import styles from '@/components/login/LoginForm.module.scss';
 
 export default function LoginForm() {
@@ -53,7 +54,7 @@ export default function LoginForm() {
 
     try {
       await login(values);
-      navigate('/', { replace: true });
+      navigate(getAndClearLoginRedirectPath(), { replace: true });
     } catch (error) {
       showError(error.message || '로그인에 실패했습니다.');
     }

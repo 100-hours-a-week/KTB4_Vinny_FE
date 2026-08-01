@@ -38,7 +38,11 @@ function hasAuthorizationHeader(headers) {
   return new Headers(headers).has('Authorization');
 }
 
-export async function request(path, options) {
+export async function request(
+  path,
+  options,
+  { suppressUnauthorizedEvent = false } = {},
+) {
   if (!API_BASE_URL) {
     throw new Error('API 주소가 설정되지 않았습니다.');
   }
@@ -67,6 +71,7 @@ export async function request(path, options) {
       if (
         error.response.status === 401
         && hasAuthorizationHeader(options?.headers)
+        && !suppressUnauthorizedEvent
       ) {
         window.dispatchEvent(new Event(AUTH_UNAUTHORIZED_EVENT));
       }

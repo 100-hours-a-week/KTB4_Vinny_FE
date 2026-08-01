@@ -1,11 +1,13 @@
 import {
+  useCallback,
   useEffect,
   useMemo,
   useState,
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   login as requestLogin,
+  logout as requestLogout,
 } from '@/api/auth';
 import { AUTH_UNAUTHORIZED_EVENT } from '@/api/api';
 import { getUser } from '@/api/user';
@@ -25,12 +27,18 @@ function readStoredValue(key) {
 }
 
 export default function AuthProvider({ children }) {
+  const location = useLocation();
   const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [auth, setAuth] = useState(() => readStoredValue(AUTH_STORAGE_KEY));
   const [user, setUser] = useState(() => readStoredValue(USER_STORAGE_KEY));
 
   useEffect(() => {
     const handleUnauthorized = () => {
+      if (!localStorage.getItem(AUTH_STORAGE_KEY)) {
+        return;
+      }
+
       localStorage.removeItem(AUTH_STORAGE_KEY);
       localStorage.removeItem(USER_STORAGE_KEY);
       setAuth(null);
@@ -44,6 +52,12 @@ export default function AuthProvider({ children }) {
     };
   }, [navigate]);
 
+  useEffect(() => {
+    if (isLoggingOut && location.pathname === '/') {
+      setIsLoggingOut(false);
+    }
+  }, [isLoggingOut, location.pathname]);
+
   const login = async (credentials) => {
     const nextAuth = await requestLogin(credentials);
     const nextUser = await getUser(nextAuth.accessToken);
@@ -56,12 +70,24 @@ export default function AuthProvider({ children }) {
     return nextUser;
   };
 
-  const logout = () => {
+  const logout = useCallback(async ({ requestServer = true } = {}) => {
+    const accessToken = auth?.accessToken;
+
+    setIsLoggingOut(true);
     localStorage.removeItem(AUTH_STORAGE_KEY);
     localStorage.removeItem(USER_STORAGE_KEY);
     setAuth(null);
     setUser(null);
-  };
+    navigate('/', { replace: true });
+
+    if (requestServer && accessToken) {
+      try {
+        await requestLogout(accessToken);
+      } catch {
+        // 서버 세션 정리에 실패해도 클라이언트 로그아웃은 계속 진행
+      }
+    }
+  }, [auth?.accessToken, navigate]);
 
   const updateUser = (updatedUser) => {
     setUser((currentUser) => {
@@ -80,11 +106,12 @@ export default function AuthProvider({ children }) {
       auth,
       user,
       isLoggedIn: Boolean(auth?.accessToken && user),
+      isLoggingOut,
       login,
       logout,
       updateUser,
     }),
-    [auth, user],
+    [auth, isLoggingOut, logout, user],
   );
 
   return (

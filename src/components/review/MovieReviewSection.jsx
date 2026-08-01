@@ -7,6 +7,7 @@ import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
 import useReviews from '@/hooks/useReviews';
 import useToast from '@/hooks/useToast';
+import { saveLoginRedirectPath } from '@/utils/authRedirect';
 import styles from '@/components/review/MovieReviewSection.module.scss';
 
 function getReviewErrorMessage(error) {
@@ -114,6 +115,11 @@ export default function MovieReviewSection({
     }
   };
 
+  const handleLoginConfirm = () => {
+    saveLoginRedirectPath(`/movies/${tmdbMovieId}`);
+    navigate('/login');
+  };
+
   return (
     <div className={styles.section} ref={sectionRef}>
       {!isLoading && !listError ? (
@@ -143,7 +149,7 @@ export default function MovieReviewSection({
           confirmLabel="로그인하기"
           description="로그인 후 가능한 서비스입니다. 로그인 페이지로 이동합니다."
           onCancel={() => setIsLoginDialogOpen(false)}
-          onConfirm={() => navigate('/login')}
+          onConfirm={handleLoginConfirm}
           open
           title="로그인이 필요합니다"
         />

@@ -47,5 +47,7 @@ export async function logout(accessToken) {
   await request('logout', {
     method: 'POST',
     headers: createAuthorizationHeaders(accessToken),
+  }, {
+    suppressUnauthorizedEvent: true,
   });
 }
