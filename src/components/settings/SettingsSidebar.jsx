@@ -90,7 +90,7 @@ export default function SettingsSidebar() {
           )}
           to="/settings/password"
         >
-          <span aria-hidden="true">◆</span>
+          <span aria-hidden="true">●</span>
           비밀번호 변경
         </NavLink>
       </nav>
