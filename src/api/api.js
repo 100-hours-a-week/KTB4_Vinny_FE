@@ -15,9 +15,8 @@ export class ApiError extends Error {
   }
 }
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-  ? `${import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '')}/`
-  : undefined;
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
+export const API_BASE_URL = rawBaseUrl.replace(/\/+$/, '');
 
 export function createAuthorizationHeaders(accessToken) {
   return accessToken
@@ -26,7 +25,7 @@ export function createAuthorizationHeaders(accessToken) {
 }
 
 const api = ky.create({
-  baseUrl: API_BASE_URL,
+  prefixUrl: API_BASE_URL,
   timeout: 5000,
 });
 
@@ -47,8 +46,10 @@ export async function request(
     throw new Error('API 주소가 설정되지 않았습니다.');
   }
 
+  const normalizedPath = typeof path === 'string' ? path.replace(/^\/+/, '') : path;
+
   try {
-    const response = await api(path, options);
+    const response = await api(normalizedPath, options);
 
     if (response.status === 204) {
       return;
