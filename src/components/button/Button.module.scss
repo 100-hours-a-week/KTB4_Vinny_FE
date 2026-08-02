@@ -1,0 +1,98 @@
+@use '@/styles/variables/colors' as colors;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 22px;
+  color: colors.$color-text-primary;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-action-primary;
+    outline-offset: 2px;
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.primary {
+  color: colors.$black;
+  background-color: colors.$color-action-primary;
+
+  &:hover {
+    background-color: colors.$lime600;
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    background-color: colors.$color-action-disabled;
+  }
+}
+
+.secondary {
+  color: colors.$color-text-primary;
+  background-color: transparent;
+  border-color: colors.$color-border-default;
+
+  &:hover {
+    background-color: colors.$color-surface-hover;
+    border-color: colors.$color-surface-strong;
+  }
+}
+
+.ghost {
+  color: colors.$color-text-muted;
+  background-color: transparent;
+
+  &:hover,
+  &:focus-visible {
+    color: colors.$color-action-primary;
+  }
+}
+
+.danger {
+  color: colors.$white;
+  background-color: colors.$color-danger;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.small {
+  min-height: 36px;
+  font-size: 13px;
+}
+
+.medium {
+  min-height: 44px;
+  padding: 0 20px;
+  font-size: 14px;
+}
+
+.large {
+  min-height: 52px;
+  padding: 0 24px;
+  font-size: 15px;
+}
+
+.fullWidth {
+  width: 100%;
+}
