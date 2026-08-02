@@ -25,7 +25,7 @@ export function createAuthorizationHeaders(accessToken) {
 }
 
 const api = ky.create({
-  prefixUrl: API_BASE_URL,
+  prefix: API_BASE_URL,
   timeout: 5000,
 });
 
