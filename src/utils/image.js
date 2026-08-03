@@ -20,7 +20,15 @@ export function getFullImageUrl(imageUrl) {
     return imageUrl;
   }
 
-  return new URL(imageUrl, API_BASE_URL).href;
+  const normalizedBaseUrl = API_BASE_URL.endsWith('/')
+    ? API_BASE_URL
+    : `${API_BASE_URL}/`;
+
+  const normalizedImageUrl = imageUrl.startsWith('/')
+    ? imageUrl.slice(1)
+    : imageUrl;
+
+  return new URL(normalizedImageUrl, normalizedBaseUrl).href;
 }
 
 export function getMovieImageUrl(imagePath, size = 'original') {
