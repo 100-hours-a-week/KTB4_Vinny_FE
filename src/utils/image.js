@@ -28,7 +28,9 @@ export function getFullImageUrl(imageUrl) {
     ? imageUrl.slice(1)
     : imageUrl;
 
-  return new URL(normalizedImageUrl, normalizedBaseUrl).href;
+  const absoluteBaseUrl = new URL(normalizedBaseUrl, window.location.origin);
+
+  return new URL(normalizedImageUrl, absoluteBaseUrl).href;
 }
 
 export function getMovieImageUrl(imagePath, size = 'original') {
