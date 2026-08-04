@@ -1,8 +1,14 @@
-import { useEffect, useState } from 'react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import Button from '@/components/button/Button';
 import styles from '@/components/review/ReviewForm.module.scss';
 
 const MAX_CONTENT_LENGTH = 1000;
+const MAX_TEXTAREA_HEIGHT = 320;
 
 function StarRatingInput({
   disabled,
@@ -70,6 +76,7 @@ export default function ReviewForm({
 }) {
   const [rating, setRating] = useState(0);
   const [content, setContent] = useState('');
+  const textareaRef = useRef(null);
   const isEditing = Boolean(editingReview);
   const isValid = rating > 0 && content.trim().length > 0;
 
@@ -77,6 +84,24 @@ export default function ReviewForm({
     setRating(editingReview?.rating ?? 0);
     setContent(editingReview?.content ?? '');
   }, [editingReview]);
+
+  useLayoutEffect(() => {
+    const textarea = textareaRef.current;
+
+    if (!textarea) {
+      return;
+    }
+
+    textarea.style.height = 'auto';
+    textarea.style.height = `${Math.min(textarea.scrollHeight, MAX_TEXTAREA_HEIGHT)}px`;
+    textarea.style.overflowY = textarea.scrollHeight > MAX_TEXTAREA_HEIGHT
+      ? 'auto'
+      : 'hidden';
+  }, [content]);
+
+  const handleContentChange = (event) => {
+    setContent(event.target.value.slice(0, MAX_CONTENT_LENGTH));
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -133,7 +158,7 @@ export default function ReviewForm({
             disabled={isSubmitting}
             id="review-content"
             maxLength={MAX_CONTENT_LENGTH}
-            onChange={(event) => setContent(event.target.value)}
+            onChange={handleContentChange}
             onClick={() => {
               if (!isLoggedIn) {
                 onLoginRequired();
@@ -141,6 +166,7 @@ export default function ReviewForm({
             }}
             placeholder="이 영화에 대한 생각을 자유롭게 남겨주세요!"
             readOnly={!isLoggedIn}
+            ref={textareaRef}
             value={content}
           />
           <span>{content.length}/{MAX_CONTENT_LENGTH}</span>
