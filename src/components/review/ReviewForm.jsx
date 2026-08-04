@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Button from '@/components/button/Button';
 import styles from '@/components/review/ReviewForm.module.scss';
 
-const MAX_CONTENT_LENGTH = 500;
+const MAX_CONTENT_LENGTH = 1000;
 
 function StarRatingInput({
   disabled,
