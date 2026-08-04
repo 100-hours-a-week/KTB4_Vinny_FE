@@ -32,10 +32,15 @@ export default function ProfileEditForm() {
     handleSubmit,
     reset,
     setValue,
-    formState: { errors, isDirty, isSubmitting },
+    formState: {
+      errors,
+      isDirty,
+      isSubmitting,
+      isValid,
+    },
   } = useForm({
     resolver: zodResolver(profileEditFormSchema),
-    mode: 'onBlur',
+    mode: 'onChange',
     defaultValues: {
       nickname: user.nickname,
       profileImage: null,
@@ -140,7 +145,7 @@ export default function ProfileEditForm() {
           <Button
             className={styles.submitButton}
             type="submit"
-            disabled={!isDirty || isSubmitting}
+            disabled={!isDirty || !isValid || isSubmitting}
           >
             {isSubmitting ? '저장 중...' : '변경사항 저장'}
           </Button>
