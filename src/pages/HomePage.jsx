@@ -3,44 +3,53 @@ import HeroBanner from '@/components/home/HeroBanner';
 import HomeFeedback from '@/components/home/HomeFeedback';
 import HomeSkeleton from '@/components/home/HomeSkeleton';
 import MovieSection from '@/components/home/MovieSection';
-import { getFeaturedMovies, getPopularMovies } from '@/api/movies';
+import { getCachedHomeMovies, getHomeMovies } from '@/services/homeMovies';
 
 export default function HomePage() {
-  const [featuredMovies, setFeaturedMovies] = useState([]);
-  const [popularMovies, setPopularMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [initialMovies] = useState(getCachedHomeMovies);
+  const [featuredMovies, setFeaturedMovies] = useState(
+    initialMovies?.featuredMovies ?? [],
+  );
+  const [popularMovies, setPopularMovies] = useState(
+    initialMovies?.popularMovies ?? [],
+  );
+  const [isLoading, setIsLoading] = useState(!initialMovies);
   const [errorMessage, setErrorMessage] = useState('');
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    const controller = new AbortController();
+    let isCancelled = false;
 
     async function loadMovies() {
-      setIsLoading(true);
+      if (retryCount > 0 || !getCachedHomeMovies()) {
+        setIsLoading(true);
+      }
       setErrorMessage('');
 
       try {
-        const requestOptions = { signal: controller.signal };
-        const [featuredData, popularData] = await Promise.all([
-          getFeaturedMovies(5, requestOptions),
-          getPopularMovies(10, requestOptions),
-        ]);
+        const homeMovies = await getHomeMovies({ force: retryCount > 0 });
 
-        setFeaturedMovies(featuredData.movies);
-        setPopularMovies(popularData.movies);
+        if (isCancelled) {
+          return;
+        }
+
+        setFeaturedMovies(homeMovies.featuredMovies);
+        setPopularMovies(homeMovies.popularMovies);
       } catch (error) {
-        if (error.name !== 'AbortError') {
+        if (!isCancelled) {
           setErrorMessage(error.message || '영화 정보를 불러오지 못했습니다.');
         }
       } finally {
-        if (!controller.signal.aborted) {
+        if (!isCancelled) {
           setIsLoading(false);
         }
       }
     }
 
     loadMovies();
-    return () => controller.abort();
+    return () => {
+      isCancelled = true;
+    };
   }, [retryCount]);
 
   if (isLoading) {
