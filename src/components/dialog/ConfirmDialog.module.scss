@@ -19,6 +19,7 @@
     margin: 0;
     font-size: 19px;
     line-height: 1.3;
+    outline: none;
     text-align: center;
   }
 
@@ -35,6 +36,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+}
+
+.singleAction {
+  grid-template-columns: 1fr;
 }
 
 .button {

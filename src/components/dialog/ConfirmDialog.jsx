@@ -8,17 +8,20 @@ export default function ConfirmDialog({
   description,
   confirmLabel = '확인',
   cancelLabel = '취소',
+  showCancel = true,
   isPending = false,
   onCancel,
   onConfirm,
 }) {
   const dialogRef = useRef(null);
+  const titleRef = useRef(null);
 
   useEffect(() => {
     const dialog = dialogRef.current;
 
     if (open && !dialog.open) {
       dialog.showModal();
+      titleRef.current?.focus({ preventScroll: true });
     } else if (!open && dialog.open) {
       dialog.close();
     }
@@ -28,7 +31,7 @@ export default function ConfirmDialog({
     event.preventDefault();
 
     if (!isPending) {
-      onCancel();
+      (onCancel ?? onConfirm)();
     }
   };
 
@@ -40,17 +43,19 @@ export default function ConfirmDialog({
       aria-describedby="confirm-dialog-description"
       onCancel={handleCancel}
     >
-      <h2 id="confirm-dialog-title">{title}</h2>
+      <h2 id="confirm-dialog-title" ref={titleRef} tabIndex={-1}>{title}</h2>
       <p id="confirm-dialog-description">{description}</p>
-      <div className={styles.actions}>
-        <Button
-          className={`${styles.button} ${styles.cancelButton}`}
-          variant="secondary"
-          disabled={isPending}
-          onClick={onCancel}
-        >
-          {cancelLabel}
-        </Button>
+      <div className={`${styles.actions} ${!showCancel ? styles.singleAction : ''}`}>
+        {showCancel ? (
+          <Button
+            className={`${styles.button} ${styles.cancelButton}`}
+            variant="secondary"
+            disabled={isPending}
+            onClick={onCancel ?? onConfirm}
+          >
+            {cancelLabel}
+          </Button>
+        ) : null}
         <Button
           className={styles.button}
           disabled={isPending}
