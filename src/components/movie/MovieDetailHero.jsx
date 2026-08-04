@@ -80,11 +80,15 @@ export default function MovieDetailHero({ movie }) {
               <span className={`${styles.ratingSource} ${styles.cineonSource}`}>
                 CINEON
               </span>
-              <span className={styles.ratingValue}>
-                <span aria-hidden="true" className={styles.star}>★</span>
-                <strong>{movie.cineonRating.toFixed(1)}</strong>
-                <span className={styles.ratingScale}>/ 5</span>
-              </span>
+              {movie.cineonRating > 0 ? (
+                <span className={styles.ratingValue}>
+                  <span aria-hidden="true" className={styles.star}>★</span>
+                  <strong>{movie.cineonRating.toFixed(1)}</strong>
+                  <span className={styles.ratingScale}>/ 5</span>
+                </span>
+              ) : (
+                <span className={styles.emptyRating}>평점 없음</span>
+              )}
             </div>
           </div>
           <p className={movie.overview ? styles.overview : styles.emptyOverview}>
