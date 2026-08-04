@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { deleteUser } from '@/api/user';
 import ConfirmDialog from '@/components/dialog/ConfirmDialog';
 import Toast from '@/components/toast/Toast';
 import { useAuth } from '@/context/auth-context';
 import useToast from '@/hooks/useToast';
-import { getFullImageUrl } from '@/utils/image';
 import styles from '@/components/settings/SettingsSidebar.module.scss';
 
 export default function SettingsSidebar() {
@@ -13,7 +12,6 @@ export default function SettingsSidebar() {
     auth,
     isLoggingOut,
     logout,
-    user,
   } = useAuth();
   const [isWithdrawalDialogOpen, setIsWithdrawalDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -22,9 +20,6 @@ export default function SettingsSidebar() {
     showError,
     toast,
   } = useToast();
-  const profileInitial = user.nickname.trim().charAt(0);
-  const profileImageUrl = getFullImageUrl(user.profileImage);
-
   const handleLogout = async () => {
     if (isLoggingOut) {
       return;
@@ -49,24 +44,13 @@ export default function SettingsSidebar() {
 
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.userProfile}>
-        <span
-          className={styles.avatar}
-          style={
-            profileImageUrl
-              ? { backgroundImage: `url("${profileImageUrl}")` }
-              : undefined
-          }
-        >
-          {!profileImageUrl && profileInitial}
-        </span>
-        <div className={styles.userText}>
-          <strong>{user.nickname}</strong>
-          <span>{user.email}</span>
-        </div>
-      </div>
+      <Link className={styles.homeLink} to="/">
+        <span aria-hidden="true">←</span>
+        홈으로 돌아가기
+      </Link>
 
       <nav aria-label="설정 메뉴">
+        <span className={styles.navLabel}>계정</span>
         <NavLink
           className={({ isActive }) => (
             `${styles.navLink} ${isActive ? styles.active : ''}`.trim()
