@@ -4,13 +4,11 @@ import { updateUserPassword } from '@/api/user';
 import Button from '@/components/button/Button';
 import FormInput from '@/components/input/FormInput';
 import Toast from '@/components/toast/Toast';
-import { useAuth } from '@/context/auth-context';
 import useToast from '@/hooks/useToast';
 import { passwordEditSchema } from '@/schema/user';
 import styles from '@/components/settings/PasswordEditForm.module.scss';
 
 export default function PasswordEditForm() {
-  const { auth } = useAuth();
   const {
     closeToast,
     showError,
@@ -38,7 +36,7 @@ export default function PasswordEditForm() {
     closeToast();
 
     try {
-      await updateUserPassword(formValues, auth.accessToken);
+      await updateUserPassword(formValues);
       reset();
       showSuccess('비밀번호를 변경했습니다.');
     } catch (error) {

@@ -5,7 +5,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   login as requestLogin,
   logout as requestLogout,
@@ -15,39 +15,27 @@ import { getUser } from '@/api/user';
 import ConfirmDialog from '@/components/dialog/ConfirmDialog';
 import { AuthContext } from '@/context/auth-context';
 
-const AUTH_STORAGE_KEY = 'auth';
-const USER_STORAGE_KEY = 'user';
-
-function readStoredValue(key) {
-  try {
-    const value = localStorage.getItem(key);
-    return value ? JSON.parse(value) : null;
-  } catch {
-    localStorage.removeItem(key);
-    return null;
-  }
-}
-
 export default function AuthProvider({ children }) {
-  const location = useLocation();
   const navigate = useNavigate();
+  const [isInitializing, setIsInitializing] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isSessionExpired, setIsSessionExpired] = useState(false);
-  const [auth, setAuth] = useState(() => readStoredValue(AUTH_STORAGE_KEY));
-  const [user, setUser] = useState(() => readStoredValue(USER_STORAGE_KEY));
-  const validatedAccessTokenRef = useRef(null);
+  const [user, setUser] = useState(null);
+  const userRef = useRef(null);
   const validationPromiseRef = useRef(null);
+
+  const setCurrentUser = useCallback((nextUser) => {
+    userRef.current = nextUser;
+    setUser(nextUser);
+  }, []);
 
   useEffect(() => {
     const handleUnauthorized = () => {
-      if (!localStorage.getItem(AUTH_STORAGE_KEY)) {
+      if (!userRef.current) {
         return;
       }
 
-      localStorage.removeItem(AUTH_STORAGE_KEY);
-      localStorage.removeItem(USER_STORAGE_KEY);
-      setAuth(null);
-      setUser(null);
+      setCurrentUser(null);
       setIsSessionExpired(true);
     };
 
@@ -55,57 +43,38 @@ export default function AuthProvider({ children }) {
     return () => {
       window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
     };
-  }, []);
+  }, [setCurrentUser]);
 
   const validateSession = useCallback(async () => {
-    const accessToken = auth?.accessToken;
-
-    if (!accessToken) {
-      return;
-    }
-
     if (validationPromiseRef.current) {
       return validationPromiseRef.current;
     }
 
-    const validationPromise = getUser(accessToken)
+    const validationPromise = getUser()
       .then((nextUser) => {
-        const storedAuth = readStoredValue(AUTH_STORAGE_KEY);
-
-        if (storedAuth?.accessToken !== accessToken) {
-          return;
-        }
-
-        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(nextUser));
-        setUser(nextUser);
+        setCurrentUser(nextUser);
+        return nextUser;
       })
       .catch(() => {
-        // 401은 전역 unauthorized 이벤트가 처리하고, 일시적인 네트워크 오류는 무시
+        setCurrentUser(null);
+        return null;
       })
       .finally(() => {
         validationPromiseRef.current = null;
+        setIsInitializing(false);
       });
 
     validationPromiseRef.current = validationPromise;
     return validationPromise;
-  }, [auth?.accessToken]);
+  }, [setCurrentUser]);
 
   useEffect(() => {
-    if (validatedAccessTokenRef.current === auth?.accessToken) {
-      return;
-    }
-
-    validatedAccessTokenRef.current = auth?.accessToken ?? null;
     validateSession();
-  }, [auth?.accessToken, validateSession]);
+  }, [validateSession]);
 
   useEffect(() => {
-    if (!auth?.accessToken) {
-      return undefined;
-    }
-
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === 'visible' && userRef.current) {
         validateSession();
       }
     };
@@ -114,71 +83,53 @@ export default function AuthProvider({ children }) {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [auth?.accessToken, validateSession]);
+  }, [validateSession]);
 
-  useEffect(() => {
-    if (isLoggingOut && location.pathname === '/') {
-      setIsLoggingOut(false);
-    }
-  }, [isLoggingOut, location.pathname]);
+  const login = useCallback(async (credentials) => {
+    await requestLogin(credentials);
+    const nextUser = await getUser();
 
-  const login = async (credentials) => {
-    const nextAuth = await requestLogin(credentials);
-    const nextUser = await getUser(nextAuth.accessToken);
-
-    validatedAccessTokenRef.current = nextAuth.accessToken;
     setIsSessionExpired(false);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(nextAuth));
-    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(nextUser));
-    setAuth(nextAuth);
-    setUser(nextUser);
-
+    setCurrentUser(nextUser);
     return nextUser;
-  };
+  }, [setCurrentUser]);
 
   const logout = useCallback(async ({ requestServer = true } = {}) => {
-    const accessToken = auth?.accessToken;
-
     setIsLoggingOut(true);
     setIsSessionExpired(false);
-    localStorage.removeItem(AUTH_STORAGE_KEY);
-    localStorage.removeItem(USER_STORAGE_KEY);
-    setAuth(null);
-    setUser(null);
-    navigate('/', { replace: true });
 
-    if (requestServer && accessToken) {
+    if (requestServer) {
       try {
-        await requestLogout(accessToken);
-      } catch {
-        // 서버 세션 정리에 실패해도 클라이언트 로그아웃은 계속 진행
+        await requestLogout();
+      } catch (error) {
+        setIsLoggingOut(false);
+        throw error;
       }
     }
-  }, [auth?.accessToken, navigate]);
 
-  const updateUser = (updatedUser) => {
-    setUser((currentUser) => {
-      const nextUser = {
-        ...currentUser,
-        ...updatedUser,
-      };
+    setCurrentUser(null);
+    setIsLoggingOut(false);
+    navigate('/', { replace: true });
+  }, [navigate, setCurrentUser]);
 
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(nextUser));
-      return nextUser;
+  const updateUser = useCallback((updatedUser) => {
+    setCurrentUser({
+      ...userRef.current,
+      ...updatedUser,
     });
-  };
+  }, [setCurrentUser]);
 
   const value = useMemo(
     () => ({
-      auth,
       user,
-      isLoggedIn: Boolean(auth?.accessToken && user),
+      isInitializing,
+      isLoggedIn: Boolean(user),
       isLoggingOut,
       login,
       logout,
       updateUser,
     }),
-    [auth, isLoggingOut, logout, user],
+    [isInitializing, isLoggingOut, login, logout, updateUser, user],
   );
 
   return (

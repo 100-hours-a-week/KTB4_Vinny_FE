@@ -12,11 +12,6 @@ export const loginSchema = z.object({
   password: passwordSchema,
 });
 
-export const loginResponseSchema = z.object({
-  accessToken: z.string().min(1),
-  userId: z.string().min(1),
-});
-
 export const signupSchema = z
   .object({
     email: emailSchema,
@@ -29,7 +24,3 @@ export const signupSchema = z
     path: ['passwordConfirm'],
     message: '* 비밀번호와 다릅니다.',
   });
-
-export const signupResponseSchema = z.object({
-  userId: z.string().min(1),
-});

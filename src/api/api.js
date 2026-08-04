@@ -1,4 +1,6 @@
-import ky, { HTTPError, TimeoutError } from 'ky';
+import { HTTPError, TimeoutError } from 'ky';
+import { apiClient } from '@/api/client';
+import { getCsrfToken } from '@/api/csrf';
 
 export const AUTH_UNAUTHORIZED_EVENT = 'auth:unauthorized';
 
@@ -15,41 +17,26 @@ export class ApiError extends Error {
   }
 }
 
-const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
-export const API_BASE_URL = rawBaseUrl.replace(/\/+$/, '');
-
-export function createAuthorizationHeaders(accessToken) {
-  return accessToken
-    ? { Authorization: `Bearer ${accessToken}` }
-    : undefined;
-}
-
-const api = ky.create({
-  prefix: API_BASE_URL,
-  timeout: 5000,
-});
-
-function hasAuthorizationHeader(headers) {
-  if (!headers) {
-    return false;
-  }
-
-  return new Headers(headers).has('Authorization');
-}
+const CSRF_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 export async function request(
   path,
   options,
   { suppressUnauthorizedEvent = false } = {},
 ) {
-  if (!API_BASE_URL) {
-    throw new Error('API 주소가 설정되지 않았습니다.');
+  const normalizedPath = typeof path === 'string' ? path.replace(/^\/+/, '') : path;
+  const method = (options?.method || 'GET').toUpperCase();
+  let requestOptions = options;
+
+  if (CSRF_METHODS.has(method)) {
+    const token = await getCsrfToken();
+    const headers = new Headers(options?.headers);
+    headers.set('X-XSRF-TOKEN', token);
+    requestOptions = { ...options, headers };
   }
 
-  const normalizedPath = typeof path === 'string' ? path.replace(/^\/+/, '') : path;
-
   try {
-    const response = await api(normalizedPath, options);
+    const response = await apiClient(normalizedPath, requestOptions);
 
     if (response.status === 204) {
       return;
@@ -75,7 +62,7 @@ export async function request(
 
       if (
         error.response.status === 401
-        && hasAuthorizationHeader(options?.headers)
+        && normalizedPath !== 'login'
         && !suppressUnauthorizedEvent
       ) {
         window.dispatchEvent(new Event(AUTH_UNAUTHORIZED_EVENT));

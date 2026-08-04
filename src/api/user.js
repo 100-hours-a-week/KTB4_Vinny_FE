@@ -1,10 +1,8 @@
-import { createAuthorizationHeaders, request } from '@/api/api';
+import { request } from '@/api/api';
 import { profileEditResponseSchema, userSchema } from '@/schema/user';
 
-export async function getUser(accessToken) {
-  const data = await request('users/me', {
-    headers: createAuthorizationHeaders(accessToken),
-  });
+export async function getUser() {
+  const data = await request('users/me');
   const result = userSchema.safeParse(data);
 
   if (!result.success) {
@@ -14,7 +12,7 @@ export async function getUser(accessToken) {
   return result.data;
 }
 
-export async function updateUserProfile(payload, accessToken) {
+export async function updateUserProfile(payload) {
   const formData = new FormData();
 
   formData.append('nickname', payload.nickname);
@@ -25,7 +23,6 @@ export async function updateUserProfile(payload, accessToken) {
 
   const data = await request('users/me/profile', {
     method: 'PATCH',
-    headers: createAuthorizationHeaders(accessToken),
     body: formData,
   });
   const result = profileEditResponseSchema.safeParse(data);
@@ -37,17 +34,15 @@ export async function updateUserProfile(payload, accessToken) {
   return result.data;
 }
 
-export async function updateUserPassword(payload, accessToken) {
+export async function updateUserPassword(payload) {
   await request('users/me/password', {
     method: 'PATCH',
-    headers: createAuthorizationHeaders(accessToken),
     json: payload,
   });
 }
 
-export async function deleteUser(accessToken) {
+export async function deleteUser() {
   await request('users/me', {
     method: 'DELETE',
-    headers: createAuthorizationHeaders(accessToken),
   });
 }

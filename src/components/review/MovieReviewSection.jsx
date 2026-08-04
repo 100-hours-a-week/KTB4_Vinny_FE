@@ -29,7 +29,7 @@ export default function MovieReviewSection({
 }) {
   const navigate = useNavigate();
   const sectionRef = useRef(null);
-  const { auth, isLoggedIn } = useAuth();
+  const { isLoggedIn } = useAuth();
   const [editingReview, setEditingReview] = useState(null);
   const [reviewToDelete, setReviewToDelete] = useState(null);
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
@@ -39,7 +39,6 @@ export default function MovieReviewSection({
     showSuccess,
     toast,
   } = useToast();
-  const accessToken = auth?.accessToken;
   const {
     create,
     error,
@@ -51,14 +50,14 @@ export default function MovieReviewSection({
     reviews,
     totalReviews,
     update,
-  } = useReviews({ accessToken, tmdbMovieId });
+  } = useReviews({ tmdbMovieId });
   const hasOwnReview = reviews.some((review) => review.isOwner);
   const listError = error
     ? getReviewErrorMessage(error)
     : '';
 
   const handleReviewSubmit = async (payload) => {
-    if (!accessToken) {
+    if (!isLoggedIn) {
       setIsLoginDialogOpen(true);
       return false;
     }
@@ -94,7 +93,7 @@ export default function MovieReviewSection({
   };
 
   const handleDelete = async () => {
-    if (!reviewToDelete || !accessToken) {
+    if (!reviewToDelete || !isLoggedIn) {
       return;
     }
 

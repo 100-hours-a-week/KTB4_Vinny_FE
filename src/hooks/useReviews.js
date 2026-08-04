@@ -6,7 +6,7 @@ import {
   updateReview as requestUpdateReview,
 } from '@/api/reviews';
 
-export default function useReviews({ accessToken, tmdbMovieId }) {
+export default function useReviews({ tmdbMovieId }) {
   const [reviews, setReviews] = useState([]);
   const [totalReviews, setTotalReviews] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +26,7 @@ export default function useReviews({ accessToken, tmdbMovieId }) {
     setError(null);
 
     try {
-      const data = await getReviews(tmdbMovieId, accessToken, { signal });
+      const data = await getReviews(tmdbMovieId, { signal });
       applyReviewList(data);
       return data;
     } catch (error) {
@@ -39,7 +39,7 @@ export default function useReviews({ accessToken, tmdbMovieId }) {
         setIsLoading(false);
       }
     }
-  }, [accessToken, applyReviewList, tmdbMovieId]);
+  }, [applyReviewList, tmdbMovieId]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -52,7 +52,7 @@ export default function useReviews({ accessToken, tmdbMovieId }) {
     setIsSaving(true);
 
     try {
-      await requestCreateReview(tmdbMovieId, payload, accessToken);
+      await requestCreateReview(tmdbMovieId, payload);
       await reload({ showLoading: false });
     } finally {
       setIsSaving(false);
@@ -66,7 +66,6 @@ export default function useReviews({ accessToken, tmdbMovieId }) {
       const updatedReview = await requestUpdateReview(
         reviewId,
         payload,
-        accessToken,
       );
       setReviews((currentReviews) => currentReviews.map((review) => (
         review.reviewId === updatedReview.reviewId ? updatedReview : review
@@ -81,7 +80,7 @@ export default function useReviews({ accessToken, tmdbMovieId }) {
     setIsDeleting(true);
 
     try {
-      await requestDeleteReview(reviewId, accessToken);
+      await requestDeleteReview(reviewId);
       setReviews((currentReviews) => currentReviews.filter(
         (review) => review.reviewId !== reviewId,
       ));

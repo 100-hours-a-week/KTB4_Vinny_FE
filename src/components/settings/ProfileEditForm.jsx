@@ -16,7 +16,7 @@ import styles from '@/components/settings/ProfileEditForm.module.scss';
 const MAX_PROFILE_IMAGE_SIZE = 10 * 1024 * 1024;
 
 export default function ProfileEditForm() {
-  const { auth, user, updateUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const { previewUrl, setPreviewImage } = useImagePreview(
     getFullImageUrl(user.profileImage),
   );
@@ -68,7 +68,7 @@ export default function ProfileEditForm() {
     closeToast();
 
     try {
-      const updatedProfile = await updateUserProfile(values, auth.accessToken);
+      const updatedProfile = await updateUserProfile(values);
       updateUser(updatedProfile);
       reset({
         nickname: updatedProfile.nickname,

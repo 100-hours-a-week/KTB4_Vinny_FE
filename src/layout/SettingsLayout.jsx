@@ -4,11 +4,11 @@ import { useAuth } from '@/context/auth-context';
 import styles from '@/layout/Layout.module.scss';
 
 export default function SettingsLayout() {
-  const { isLoggedIn, isLoggingOut } = useAuth();
+  const { isInitializing, isLoggedIn } = useAuth();
   const location = useLocation();
 
-  if (isLoggingOut) {
-    return <Navigate to="/" replace />;
+  if (isInitializing) {
+    return null;
   }
 
   if (!isLoggedIn) {

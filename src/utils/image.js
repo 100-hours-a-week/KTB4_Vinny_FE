@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '@/api/api';
+import { API_BASE_URL } from '@/api/client';
 
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';
 

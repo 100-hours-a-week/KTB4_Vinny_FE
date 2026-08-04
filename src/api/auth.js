@@ -1,21 +1,12 @@
-import { createAuthorizationHeaders, request } from '@/api/api';
-import {
-  loginResponseSchema,
-  signupResponseSchema,
-} from '@/schema/auth';
+import { request } from '@/api/api';
+import { refreshCsrfToken } from '@/api/csrf';
 
 export async function login(payload) {
-  const data = await request('login', {
+  await request('login', {
     method: 'POST',
     json: payload,
   });
-  const result = loginResponseSchema.safeParse(data);
-
-  if (!result.success) {
-    throw new Error('로그인 응답 형식이 올바르지 않습니다.');
-  }
-
-  return result.data;
+  await refreshCsrfToken();
 }
 
 export async function signup(payload) {
@@ -30,23 +21,15 @@ export async function signup(payload) {
     formData.append('profileImage', payload.profileImage);
   }
 
-  const data = await request('sign-up', {
+  await request('sign-up', {
     method: 'POST',
     body: formData,
   });
-  const result = signupResponseSchema.safeParse(data);
-
-  if (!result.success) {
-    throw new Error('회원가입 응답 형식이 올바르지 않습니다.');
-  }
-
-  return result.data;
 }
 
-export async function logout(accessToken) {
+export async function logout() {
   await request('logout', {
     method: 'POST',
-    headers: createAuthorizationHeaders(accessToken),
   }, {
     suppressUnauthorizedEvent: true,
   });

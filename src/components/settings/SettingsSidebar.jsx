@@ -9,7 +9,6 @@ import styles from '@/components/settings/SettingsSidebar.module.scss';
 
 export default function SettingsSidebar() {
   const {
-    auth,
     isLoggingOut,
     logout,
   } = useAuth();
@@ -25,14 +24,20 @@ export default function SettingsSidebar() {
       return;
     }
 
-    await logout();
+    closeToast();
+
+    try {
+      await logout();
+    } catch {
+      showError('로그아웃에 실패했습니다.');
+    }
   };
 
   const handleWithdrawal = async () => {
     setIsDeleting(true);
 
     try {
-      await deleteUser(auth.accessToken);
+      await deleteUser();
       await logout({ requestServer: false });
     } catch (error) {
       setIsWithdrawalDialogOpen(false);
