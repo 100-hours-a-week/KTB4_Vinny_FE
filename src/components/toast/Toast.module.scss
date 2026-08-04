@@ -40,7 +40,9 @@
 }
 
 .error {
-  color: colors.$color-danger;
+  color: colors.$color-text-primary;
+  background: rgba(colors.$color-danger, 0.14);
+  border-color: rgba(colors.$color-danger, 0.65);
 }
 
 @keyframes toast-in {
