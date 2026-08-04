@@ -66,7 +66,7 @@
   font-size: 14px;
   font-weight: 700;
 
-  span + span {
+  span+span {
     position: relative;
 
     &::before {
@@ -82,7 +82,7 @@
 .overviewMuted {
   display: -webkit-box;
   max-width: 540px;
-  min-height: 48px;
+  min-height: 62px;
   margin: 22px 0 28px;
   overflow: hidden;
   color: colors.$gray100;
@@ -184,6 +184,7 @@
 }
 
 @media (max-width: 760px) {
+
   .hero,
   .content {
     min-height: 420px;
@@ -209,6 +210,7 @@
 }
 
 @media (max-width: 560px) {
+
   .hero,
   .content {
     min-height: 430px;
