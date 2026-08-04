@@ -4,17 +4,20 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  height: 100%;
+html {
+  min-height: 100%;
+  background: colors.$color-surface-page;
 }
 
 body {
+  min-height: 100vh;
   margin: 0;
   color: colors.$color-text-primary;
   font-family: 'Pretendard Variable', Arial, sans-serif;
   background:
-    linear-gradient(180deg, #0d1216 0, colors.$color-surface-page 340px),
+    linear-gradient(180deg,
+      #0d1216 0,
+      colors.$color-surface-page 340px) no-repeat,
     colors.$color-surface-page;
 }
 
