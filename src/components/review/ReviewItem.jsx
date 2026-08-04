@@ -6,8 +6,8 @@ import styles from '@/components/review/ReviewItem.module.scss';
 export default function ReviewItem({ onDelete, onEdit, review }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
-  const profileImageUrl = getFullImageUrl(review.writer.profileImage);
-  const profileInitial = review.writer.nickname.trim().charAt(0);
+  const profileImageUrl = getFullImageUrl(review.author.profileImage);
+  const profileInitial = review.author.nickname.trim().charAt(0);
 
   useEffect(() => {
     if (!isMenuOpen) {
@@ -34,7 +34,7 @@ export default function ReviewItem({ onDelete, onEdit, review }) {
           {!profileImageUrl ? profileInitial : null}
         </div>
         <div className={styles.authorInfo}>
-          <strong>{review.writer.nickname}</strong>
+          <strong>{review.author.nickname}</strong>
           <p className={styles.rating} aria-label={`별점 ${review.rating}점`}>
             <span
               aria-hidden="true"

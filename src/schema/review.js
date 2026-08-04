@@ -8,7 +8,7 @@ export const reviewSchema = z.object({
   updatedAt: z.string().min(1),
   isOwner: z.boolean(),
   isUpdated: z.boolean(),
-  writer: z.object({
+  author: z.object({
     nickname: z.string().min(1),
     profileImage: z.string().nullable(),
   }),
