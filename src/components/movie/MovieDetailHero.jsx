@@ -67,12 +67,25 @@ export default function MovieDetailHero({ movie }) {
           {metadata.length > 0 ? (
             <p className={styles.metadata}>{metadata.join(' · ')}</p>
           ) : null}
-          <div className={styles.rating}>
-            <span aria-hidden="true" className={styles.star}>★</span>
-            <strong>{movie.rating.toFixed(1)}</strong>
-            <span className={styles.reviewCount}>
-              평가 {movie.reviewCount.toLocaleString('ko-KR')}명
-            </span>
+          <div className={styles.ratings}>
+            <div className={styles.rating}>
+              <span className={styles.ratingSource}>TMDB</span>
+              <span className={styles.ratingValue}>
+                <span aria-hidden="true" className={styles.star}>★</span>
+                <strong>{movie.rating.toFixed(1)}</strong>
+                <span className={styles.ratingScale}>/ 5</span>
+              </span>
+            </div>
+            <div className={`${styles.rating} ${styles.cineonRating}`}>
+              <span className={`${styles.ratingSource} ${styles.cineonSource}`}>
+                CINEON
+              </span>
+              <span className={styles.ratingValue}>
+                <span aria-hidden="true" className={styles.star}>★</span>
+                <strong>{movie.cineonRating.toFixed(1)}</strong>
+                <span className={styles.ratingScale}>/ 5</span>
+              </span>
+            </div>
           </div>
           <p className={movie.overview ? styles.overview : styles.emptyOverview}>
             {movie.overview || '등록된 줄거리가 없습니다.'}

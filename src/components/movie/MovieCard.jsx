@@ -31,7 +31,11 @@ export default function MovieCard({ movie }) {
         </div>
         <div className={styles.info}>
           <h3 className={styles.title}>{movie.title}</h3>
-          <p aria-label={`별점 ${movie.rating.toFixed(1)}점`} className={styles.rating}>
+          <p
+            aria-label={`TMDB 평점 ${movie.rating.toFixed(1)}점`}
+            className={styles.rating}
+            title="TMDB 평점"
+          >
             <span aria-hidden="true">★</span>
             {movie.rating.toFixed(1)}
           </p>

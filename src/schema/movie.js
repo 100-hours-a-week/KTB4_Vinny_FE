@@ -23,6 +23,7 @@ export const movieDetailSchema = z.object({
   title: z.string().min(1),
   overview: z.string(),
   rating: z.number().min(0).max(5),
+  cineonRating: z.number().min(0).max(5),
   genres: z.array(z.string()),
   runtime: z.number().int().nonnegative().nullable(),
   posterPath: z.string().nullable(),
