@@ -59,7 +59,8 @@ export async function request(
 
     if (apiResponse?.success === false) {
       throw new ApiError({
-        code: apiResponse.message,
+        code: apiResponse.code ?? apiResponse.message,
+        message: apiResponse.message,
         status: response.status,
       });
     }
@@ -67,7 +68,10 @@ export async function request(
     return apiResponse?.data;
   } catch (error) {
     if (error instanceof HTTPError) {
-      const apiError = await error.response.json().catch(() => null);
+      const apiError = (
+        error.data
+        && typeof error.data === 'object'
+      ) ? error.data : null;
 
       if (
         error.response.status === 401
@@ -78,7 +82,8 @@ export async function request(
       }
 
       throw new ApiError({
-        code: apiError?.message,
+        code: apiError?.code ?? apiError?.message,
+        message: apiError?.message,
         status: error.response.status,
       });
     }
