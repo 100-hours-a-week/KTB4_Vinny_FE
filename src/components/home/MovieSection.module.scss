@@ -56,7 +56,15 @@
   overscroll-behavior-inline: contain;
   scrollbar-color: colors.$gray500 transparent;
   scrollbar-width: thin;
-  scroll-snap-type: inline proximity;
+
+  @media (hover: hover) and (pointer: fine) {
+    cursor: grab;
+    user-select: none;
+  }
+}
+
+.dragging {
+  cursor: grabbing;
 }
 
 @media (max-width: 900px) {
