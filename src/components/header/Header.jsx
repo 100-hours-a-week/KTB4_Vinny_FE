@@ -20,9 +20,6 @@ export default function Header() {
         >
           CINEON
         </Link>
-        <div>
-          ci/cd 확인
-        </div>
         {!isAuthPage && isLoggedIn ? (
           <Link
             className={styles.profileLink}
