@@ -1,0 +1,18 @@
+@use '@/styles/variables/colors' as colors;
+@use '@/styles/variables/fonts' as fonts;
+
+.logo {
+  display: inline-flex;
+  justify-self: start;
+  color: colors.$color-text-primary;
+  font-family: fonts.$fnt-pretendard;
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.accent {
+  color: colors.$color-action-primary;
+  text-shadow: 0 0 18px rgba(colors.$color-action-primary, 0.36);
+}

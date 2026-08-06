@@ -1,0 +1,30 @@
+@use '@/styles/variables/colors' as colors;
+
+.profileLink {
+  display: inline-grid;
+  place-items: center;
+  justify-self: end;
+  border-radius: 50%;
+
+  &:focus-visible {
+    outline: 2px solid colors.$color-action-primary;
+    outline-offset: 3px;
+  }
+}
+
+.avatar {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  background-color: colors.$color-surface-subtle;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: 1px solid rgba(colors.$white, 0.12);
+  border-radius: 50%;
+  color: colors.$color-text-primary;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 36px;
+  text-align: center;
+}

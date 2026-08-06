@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { getMovies } from '@/api/movies';
 
-export default function useInfiniteMovies({ limit = 30 } = {}) {
+export default function useInfiniteMovies({
+  fetchPage = getMovies,
+  limit = 30,
+} = {}) {
   const loadMoreRef = useRef(null);
   const [movies, setMovies] = useState([]);
   const [pageToLoad, setPageToLoad] = useState(1);
@@ -25,7 +28,7 @@ export default function useInfiniteMovies({ limit = 30 } = {}) {
       setErrorMessage('');
 
       try {
-        const data = await getMovies(pageToLoad, limit, {
+        const data = await fetchPage(pageToLoad, limit, {
           signal: controller.signal,
         });
 
@@ -59,7 +62,7 @@ export default function useInfiniteMovies({ limit = 30 } = {}) {
 
     loadMovies();
     return () => controller.abort();
-  }, [limit, pageToLoad, retryCount]);
+  }, [fetchPage, limit, pageToLoad, retryCount]);
 
   useEffect(() => {
     const target = loadMoreRef.current;

@@ -14,58 +14,12 @@
 
 .inner {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns:
+    minmax(max-content, 1fr)
+    minmax(0, 460px)
+    minmax(max-content, 1fr);
+  gap: clamp(12px, 2vw, 24px);
   align-items: center;
   min-height: sizes.$header-height;
   margin: 0 auto;
-}
-
-.title {
-  justify-self: start;
-  text-align: left;
-  font-size: 0;
-  font-weight: 900;
-  letter-spacing: 0;
-
-  &::before {
-    content: 'CINE';
-    color: colors.$color-text-primary;
-    font-size: 23px;
-  }
-
-  &::after {
-    content: 'ON';
-    color: colors.$color-action-primary;
-    font-size: 23px;
-    text-shadow: 0 0 18px rgba(colors.$color-action-primary, 0.36);
-  }
-}
-
-.profileLink {
-  display: inline-grid;
-  place-items: center;
-  justify-self: end;
-  border-radius: 50%;
-
-  &:focus-visible {
-    outline: 2px solid colors.$color-action-primary;
-    outline-offset: 3px;
-  }
-}
-
-.avatar {
-  display: inline-block;
-  width: 36px;
-  height: 36px;
-  background-color: colors.$color-surface-subtle;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  border: 1px solid rgba(colors.$white, 0.12);
-  border-radius: 50%;
-  color: colors.$color-text-primary;
-  font-size: 13px;
-  font-weight: 800;
-  line-height: 36px;
-  text-align: center;
 }

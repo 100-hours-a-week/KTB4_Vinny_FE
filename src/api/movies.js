@@ -1,8 +1,12 @@
 import { request } from '@/api/api';
 import { movieDetailSchema, movieListSchema } from '@/schema/movie';
 
-async function getMovieList(searchParams, options) {
-  const data = await request(`movies?${searchParams.toString()}`, options);
+async function getMovieList(searchParams, options, path = 'movies') {
+  const data = await request(
+    `${path}?${searchParams.toString()}`,
+    options,
+    { suppressUnauthorizedEvent: true },
+  );
   const result = movieListSchema.safeParse(data);
 
   if (!result.success) {
@@ -33,8 +37,22 @@ export function getMovies(page = 1, limit = 30, options) {
   }), options);
 }
 
+export function searchMovies(query, page = 1, limit = 30, options) {
+  const searchParams = new URLSearchParams({
+    query,
+    page: String(page),
+    limit: String(limit),
+  });
+
+  return getMovieList(searchParams, options, 'movies/search');
+}
+
 export async function getMovieDetail(tmdbMovieId, options) {
-  const data = await request(`movies/${tmdbMovieId}`, options);
+  const data = await request(
+    `movies/${tmdbMovieId}`,
+    options,
+    { suppressUnauthorizedEvent: true },
+  );
   const result = movieDetailSchema.safeParse(data);
 
   if (!result.success) {
