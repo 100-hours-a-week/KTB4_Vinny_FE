@@ -46,7 +46,7 @@ export async function request(
 
     if (apiResponse?.success === false) {
       throw new ApiError({
-        code: apiResponse.code ?? apiResponse.message,
+        code: apiResponse.code,
         message: apiResponse.message,
         status: response.status,
       });
@@ -69,7 +69,7 @@ export async function request(
       }
 
       throw new ApiError({
-        code: apiError?.code ?? apiError?.message,
+        code: apiError?.code,
         message: apiError?.message,
         status: error.response.status,
       });
