@@ -66,4 +66,4 @@ jobs:
           EC2_DEPLOY_PATH: ${{ secrets.EC2_DEPLOY_PATH }}
         run: |
           ssh -i ~/.ssh/ec2_key ubuntu@"$EC2_HOST" \
-            "cd '$EC2_DEPLOY_PATH' && docker compose pull frontend && docker compose up -d --no-deps frontend"
+            "cd '$EC2_DEPLOY_PATH' && sudo docker compose pull frontend && sudo docker compose up -d --no-deps frontend"
