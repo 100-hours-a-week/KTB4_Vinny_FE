@@ -1,20 +1,35 @@
 import { useId, useRef } from 'react';
+import { profileImageSchema } from '@/schema/validation';
 import styles from '@/components/input/ProfileImageInput.module.scss';
 
 export default function ProfileImageInput({
   previewUrl,
   onChange,
+  onValidationError,
   ariaLabel,
   imageAlt,
   fallback,
   overlay,
   buttonClassName = '',
-  error,
-  errorClassName = '',
 }) {
   const inputRef = useRef(null);
   const generatedId = useId();
-  const errorId = `${generatedId}-error`;
+
+  const handleChange = (event) => {
+    const [file] = event.target.files;
+
+    const validationResult = profileImageSchema.safeParse(file ?? null);
+
+    if (!validationResult.success) {
+      onValidationError?.(validationResult.error.issues[0].message);
+      onChange?.(event);
+      event.target.value = '';
+      return;
+    }
+
+    onValidationError?.('');
+    onChange?.(event);
+  };
 
   return (
     <>
@@ -24,13 +39,12 @@ export default function ProfileImageInput({
         className={styles.input}
         type="file"
         accept="image/*"
-        onChange={onChange}
+        onChange={handleChange}
       />
       <button
         className={buttonClassName}
         type="button"
         aria-label={ariaLabel}
-        aria-describedby={error ? errorId : undefined}
         onClick={() => inputRef.current?.click()}
       >
         {previewUrl ? (
@@ -40,15 +54,6 @@ export default function ProfileImageInput({
         )}
         {overlay}
       </button>
-      {error ? (
-        <p
-          id={errorId}
-          className={errorClassName}
-          role="alert"
-        >
-          {error}
-        </p>
-      ) : null}
     </>
   );
 }

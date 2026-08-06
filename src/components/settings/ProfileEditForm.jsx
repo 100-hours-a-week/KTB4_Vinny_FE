@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { updateUserProfile } from '@/api/user';
@@ -13,13 +13,13 @@ import { profileEditFormSchema } from '@/schema/user';
 import { getFullImageUrl } from '@/utils/image';
 import styles from '@/components/settings/ProfileEditForm.module.scss';
 
-const MAX_PROFILE_IMAGE_SIZE = 10 * 1024 * 1024;
-
 export default function ProfileEditForm() {
   const { user, updateUser } = useAuth();
+  const initialProfileImageUrl = getFullImageUrl(user.profileImage);
   const { previewUrl, setPreviewImage } = useImagePreview(
-    getFullImageUrl(user.profileImage),
+    initialProfileImageUrl,
   );
+  const defaultProfileImageRef = useRef(initialProfileImageUrl);
   const [imageError, setImageError] = useState('');
   const {
     closeToast,
@@ -49,24 +49,26 @@ export default function ProfileEditForm() {
 
   const handleProfileImageChange = (event) => {
     const [file] = event.target.files;
-    setImageError('');
     closeToast();
 
-    if (!file) {
-      return;
-    }
-
-    if (file.size > MAX_PROFILE_IMAGE_SIZE) {
-      event.target.value = '';
-      setImageError('* 프로필 이미지는 10MB 이하만 사용할 수 있습니다.');
-      return;
-    }
-
-    setPreviewImage(file);
-    setValue('profileImage', file, {
+    setValue('profileImage', file ?? null, {
       shouldDirty: true,
       shouldValidate: true,
     });
+
+    if (file) {
+      setPreviewImage(file);
+    }
+
+  };
+
+  const handleProfileImageRemove = () => {
+    setValue('profileImage', null, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    setPreviewImage(defaultProfileImageRef.current);
+    setImageError('');
   };
 
   const handleProfileUpdate = async (values) => {
@@ -79,14 +81,14 @@ export default function ProfileEditForm() {
         nickname: updatedProfile.nickname,
         profileImage: null,
       });
-      setPreviewImage(getFullImageUrl(updatedProfile.profileImage));
+      const updatedProfileImageUrl = getFullImageUrl(
+        updatedProfile.profileImage,
+      );
+      defaultProfileImageRef.current = updatedProfileImageUrl;
+      setPreviewImage(updatedProfileImageUrl);
       showSuccess('변경사항을 저장했습니다.');
     } catch (error) {
-      showError(
-        error.code === 'DUPLICATE_NICKNAME'
-          ? '이미 사용 중인 닉네임입니다.'
-          : error.message || '회원 정보 변경에 실패했습니다.',
-      );
+      showError(error.message || '회원 정보 변경에 실패했습니다.');
     }
   };
 
@@ -106,6 +108,7 @@ export default function ProfileEditForm() {
             <ProfileImageInput
               previewUrl={previewUrl}
               onChange={handleProfileImageChange}
+              onValidationError={setImageError}
               ariaLabel="프로필 사진 변경"
               imageAlt="현재 프로필"
               fallback={(
@@ -115,9 +118,25 @@ export default function ProfileEditForm() {
               )}
               overlay={<span className={styles.changeLabel}>변경</span>}
               buttonClassName={styles.profilePreview}
-              error={imageError}
-              errorClassName={styles.imageError}
             />
+            <p
+              className={`${styles.imageError} ${
+                imageError ? '' : styles.imageErrorHidden
+              }`}
+              role={imageError ? 'alert' : undefined}
+              aria-hidden={!imageError}
+            >
+              <span>{imageError || '\u00a0'}</span>
+              {imageError ? (
+                <button
+                  className={styles.imageErrorAction}
+                  type="button"
+                  onClick={handleProfileImageRemove}
+                >
+                  선택 취소
+                </button>
+              ) : null}
+            </p>
           </div>
         </div>
 

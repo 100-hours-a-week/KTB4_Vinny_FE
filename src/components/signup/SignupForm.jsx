@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +16,7 @@ import styles from '@/components/signup/SignupForm.module.scss';
 export default function SignupForm() {
   const navigate = useNavigate();
   const { previewUrl, setPreviewImage } = useImagePreview();
+  const [imageError, setImageError] = useState('');
   const {
     closeToast,
     showError,
@@ -47,7 +49,20 @@ export default function SignupForm() {
       shouldDirty: true,
       shouldValidate: true,
     });
-    setPreviewImage(file);
+
+    if (file) {
+      setPreviewImage(file);
+    }
+
+  };
+
+  const handleProfileImageRemove = () => {
+    setValue('profileImage', null, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    setPreviewImage(null);
+    setImageError('');
   };
 
   const handleSignup = async (formValues) => {
@@ -77,11 +92,30 @@ export default function SignupForm() {
         <ProfileImageInput
           previewUrl={previewUrl}
           onChange={handleProfileImageChange}
+          onValidationError={setImageError}
           ariaLabel="프로필 사진 추가"
           imageAlt="선택한 프로필 사진"
           fallback={<span aria-hidden="true">+</span>}
           buttonClassName={styles.profilePreview}
         />
+        <p
+          className={`${styles.imageError} ${
+            imageError ? '' : styles.imageErrorHidden
+          }`}
+          role={imageError ? 'alert' : undefined}
+          aria-hidden={!imageError}
+        >
+          <span>{imageError || '\u00a0'}</span>
+          {imageError ? (
+            <button
+              className={styles.imageErrorAction}
+              type="button"
+              onClick={handleProfileImageRemove}
+            >
+              선택 취소
+            </button>
+          ) : null}
+        </p>
       </div>
 
       <form
