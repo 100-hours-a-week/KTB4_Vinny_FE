@@ -2,14 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { getMovieDetail } from '@/api/movies';
 
 function getDetailErrorMessage(error) {
-  if (error.code === 'MOVIE_NOT_FOUND') {
-    return '요청한 영화를 찾을 수 없습니다.';
-  }
-
-  if (error.code === 'MOVIE_BAD_REQUEST') {
-    return '올바르지 않은 영화 번호입니다.';
-  }
-
   return error.message || '영화 상세 정보를 불러오지 못했습니다.';
 }
 

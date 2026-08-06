@@ -11,16 +11,7 @@ import { saveLoginRedirectPath } from '@/utils/authRedirect';
 import styles from '@/components/review/MovieReviewSection.module.scss';
 
 function getReviewErrorMessage(error) {
-  const messages = {
-    REVIEW_BAD_REQUEST: '리뷰 내용과 별점을 확인해주세요.',
-    REVIEW_NOT_FOUND: '리뷰를 찾을 수 없습니다.',
-    UNAUTHORIZED: '로그인이 필요한 서비스입니다.',
-    FORBIDDEN_ACCESS: '리뷰를 변경할 권한이 없습니다.',
-  };
-
-  return messages[error?.code]
-    || error?.message
-    || '리뷰 요청에 실패했습니다.';
+  return error?.message || '리뷰 요청에 실패했습니다.';
 }
 
 export default function MovieReviewSection({
@@ -74,7 +65,13 @@ export default function MovieReviewSection({
         showSuccess('리뷰를 수정했습니다.');
       } else {
         await create(payload);
-        showSuccess('리뷰를 등록했습니다.');
+
+        try {
+          await reload({ setErrorOnFailure: false, showLoading: false });
+          showSuccess('리뷰를 등록했습니다.');
+        } catch {
+          showSuccess('리뷰를 등록했지만 목록을 새로 불러오지 못했습니다.');
+        }
       }
 
       onMovieChange();
@@ -110,6 +107,7 @@ export default function MovieReviewSection({
       showSuccess('리뷰를 삭제했습니다.');
       onMovieChange();
     } catch (error) {
+      setReviewToDelete(null);
       showError(getReviewErrorMessage(error));
     }
   };
