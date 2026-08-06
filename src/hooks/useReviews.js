@@ -19,7 +19,11 @@ export default function useReviews({ tmdbMovieId }) {
     setTotalReviews(data.totalReviews);
   }, []);
 
-  const reload = useCallback(async ({ signal, showLoading = true } = {}) => {
+  const reload = useCallback(async ({
+    setErrorOnFailure = true,
+    showLoading = true,
+    signal,
+  } = {}) => {
     if (showLoading) {
       setIsLoading(true);
     }
@@ -30,7 +34,7 @@ export default function useReviews({ tmdbMovieId }) {
       applyReviewList(data);
       return data;
     } catch (error) {
-      if (error.name !== 'AbortError') {
+      if (error.name !== 'AbortError' && setErrorOnFailure) {
         setError(error);
       }
       throw error;
@@ -52,8 +56,7 @@ export default function useReviews({ tmdbMovieId }) {
     setIsSaving(true);
 
     try {
-      await requestCreateReview(tmdbMovieId, payload);
-      await reload({ showLoading: false });
+      return await requestCreateReview(tmdbMovieId, payload);
     } finally {
       setIsSaving(false);
     }
