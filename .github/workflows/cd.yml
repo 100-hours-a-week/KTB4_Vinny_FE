@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-
+    
 permissions:
   contents: read
 
@@ -73,6 +73,8 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -101,4 +103,9 @@ jobs:
           EC2_DEPLOY_PATH: ${{ secrets.EC2_DEPLOY_PATH }}
         run: |
           ssh -i ~/.ssh/ec2_key ubuntu@"$EC2_HOST" \
-            "cd '$EC2_DEPLOY_PATH' && sudo docker compose pull frontend && sudo docker compose up -d --no-deps frontend"
+            "cd '$EC2_DEPLOY_PATH' && \
+             sudo docker compose pull frontend && \
+             sudo docker compose up -d --no-deps --wait --wait-timeout 60 frontend && \
+             sudo docker compose ps -q frontend | \
+             xargs sudo docker inspect --format '{{ index .Config.Labels \"org.opencontainers.image.revision\" }}' | \
+             grep -Fx '${{ github.sha }}'"
