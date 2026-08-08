@@ -1,0 +1,18 @@
+@use '@/styles/variables/colors' as colors;
+
+.loginButton {
+  justify-self: end;
+  min-width: auto;
+  padding-inline: 4px;
+  color: colors.$color-text-muted;
+  border: 0;
+  border-radius: 0;
+  font-weight: 700;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus-visible {
+    color: colors.$color-action-primary;
+    background: transparent;
+  }
+}

@@ -8,10 +8,13 @@ export default function MovieGridList({
   loadMoreRef,
   movies,
   onRetry,
+  title = '전체 영화',
 }) {
+  const titleId = 'movie-grid-title';
+
   return (
-    <section aria-labelledby="all-movies-title" className={styles.section}>
-      <h1 id="all-movies-title">전체 영화</h1>
+    <section aria-labelledby={titleId} className={styles.section}>
+      <h1 id={titleId}>{title}</h1>
       <div className={styles.grid}>
         {movies.map((movie) => (
           <MovieCard key={movie.tmdbMovieId} movie={movie} />

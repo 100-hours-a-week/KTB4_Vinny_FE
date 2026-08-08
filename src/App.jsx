@@ -9,6 +9,7 @@ import SignupPage from '@/pages/SignupPage';
 import HomePage from '@/pages/HomePage';
 import MovieDetailPage from '@/pages/MovieDetailPage';
 import MovieListPage from '@/pages/MovieListPage';
+import SearchPage from '@/pages/SearchPage';
 import ProfileEditPage from '@/pages/ProfileEditPage';
 import PasswordEditPage from '@/pages/PasswordEditPage';
 
@@ -25,6 +26,7 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/movies" element={<MovieListPage />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path="/movies/:tmdbMovieId" element={<MovieDetailPage />} />
           </Route>
           <Route path="/settings" element={<SettingsLayout />}>
