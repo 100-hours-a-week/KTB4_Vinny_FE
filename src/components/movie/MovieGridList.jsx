@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import MovieCard from '@/components/movie/MovieCard';
 import styles from '@/components/movie/MovieGridList.module.scss';
 
@@ -10,7 +11,8 @@ export default function MovieGridList({
   onRetry,
   title = '전체 영화',
 }) {
-  const titleId = 'movie-grid-title';
+  const generatedId = useId();
+  const titleId = `movie-grid-list-title-${generatedId}`;
 
   return (
     <section aria-labelledby={titleId} className={styles.section}>
